@@ -1,1188 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tenantflow — AI Property Management Demo</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0f;
-            color: #e5e7eb;
-            overflow-x: hidden;
-        }
-
-        /* Navigation */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            background: linear-gradient(180deg, rgba(10, 10, 15, 0.95) 0%, rgba(10, 10, 15, 0) 100%);
-            padding: 1.5rem 2rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: #9ca3af;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #3b82f6;
-        }
-
-        .demo-badge {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #3b82f6;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .other-demos {
-            display: flex;
-            gap: 0.8rem;
-            font-size: 0.85rem;
-        }
-
-        .other-demos a {
-            color: #6b7280;
-            text-decoration: none;
-            padding: 0.3rem 0.6rem;
-            border-radius: 3px;
-            transition: all 0.3s;
-        }
-
-        .other-demos a:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-        }
-
-        /* Main content */
-        main {
-            margin-top: 80px;
-        }
-
-        section {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .section-content {
-            max-width: 900px;
-            width: 100%;
-            text-align: center;
-            z-index: 10;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in {
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-        }
-
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .animate-on-scroll.visible {
-            animation: fadeInUp 0.8s ease-out forwards;
-        }
-
-        /* Section 1 - Opening */
-        #opening {
-            background: linear-gradient(135deg, #0a0a0f 0%, #1a0033 50%, #0a0a0f 100%);
-            position: relative;
-        }
-
-        #opening::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
-            z-index: 1;
-        }
-
-        .opening-headline {
-            font-size: 4rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            color: #fff;
-            position: relative;
-            z-index: 2;
-            min-height: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .typewriter {
-            border-right: 3px solid #3b82f6;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .opening-subtext {
-            font-size: 1.3rem;
-            color: #9ca3af;
-            margin: 2rem 0;
-            position: relative;
-            z-index: 2;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out 2.5s forwards;
-        }
-
-        .opening-cta {
-            position: relative;
-            z-index: 2;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease-out 3.2s forwards;
-            margin-top: 2rem;
-        }
-
-        .opening-cta .until-now {
-            font-size: 2rem;
-            color: #3b82f6;
-            font-weight: 700;
-        }
-
-        /* Section 2 - Problem */
-        #problem {
-            background: linear-gradient(180deg, #0a0a0f 0%, #1a0020 100%);
-        }
-
-        .problem-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .problem-card {
-            background: linear-gradient(135deg, rgba(30, 30, 45, 0.8) 0%, rgba(50, 30, 80, 0.6) 100%);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-        }
-
-        .problem-card:hover {
-            border-color: rgba(139, 92, 246, 0.6);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.1);
-        }
-
-        .problem-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .problem-stat {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #8b5cf6;
-            margin-bottom: 0.5rem;
-        }
-
-        .problem-desc {
-            color: #9ca3af;
-            line-height: 1.6;
-        }
-
-        h2 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-            font-size: 1.25rem;
-            color: #9ca3af;
-            margin-bottom: 3rem;
-        }
-
-        /* Section 3 - Product Intro */
-        #product-intro {
-            background: linear-gradient(180deg, #1a0020 0%, #0a0a0f 100%);
-        }
-
-        .app-mockup {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 16px;
-            overflow: hidden;
-            margin-top: 2rem;
-            box-shadow: 0 30px 60px rgba(59, 130, 246, 0.15);
-            animation: slideUp 0.8s ease-out 0.3s backwards;
-        }
-
-        .app-header {
-            background: linear-gradient(90deg, #0f3460 0%, #16213e 100%);
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .app-dots {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .app-dots:nth-child(1) { background: #ff5f56; }
-        .app-dots:nth-child(2) { background: #ffbd2e; }
-        .app-dots:nth-child(3) { background: #27c93f; }
-
-        .app-body {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            min-height: 400px;
-        }
-
-        .app-sidebar {
-            background: rgba(0, 0, 0, 0.3);
-            border-right: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 1.5rem 1rem;
-        }
-
-        .app-nav-item {
-            padding: 0.8rem;
-            margin-bottom: 0.5rem;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            color: #9ca3af;
-            background: rgba(59, 130, 246, 0.05);
-            transition: all 0.3s;
-        }
-
-        .app-nav-item:first-child {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-        }
-
-        .app-content {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-        }
-
-        .stat-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-box {
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #8b5cf6;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            margin-top: 0.5rem;
-        }
-
-        .ai-badge {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.5);
-            color: #10b981;
-            padding: 0.6rem 1rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: inline-block;
-            animation: glow 2s ease-in-out infinite;
-        }
-
-        /* Section 4 - AI Inbox */
-        #ai-inbox {
-            background: linear-gradient(180deg, #0a0a0f 0%, #1a0033 100%);
-        }
-
-        .email-demo {
-            background: linear-gradient(135deg, rgba(30, 30, 45, 0.8) 0%, rgba(50, 30, 80, 0.6) 100%);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 600px;
-            backdrop-filter: blur(10px);
-        }
-
-        .email-from {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            margin-bottom: 1rem;
-        }
-
-        .email-content {
-            text-align: left;
-            color: #e5e7eb;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-            min-height: 80px;
-        }
-
-        .classification-badge {
-            display: inline-block;
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.5);
-            color: #f87171;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            opacity: 0;
-            animation: slideUp 0.6s ease-out 1s forwards;
-        }
-
-        .draft-response {
-            background: rgba(16, 185, 129, 0.1);
-            border-left: 3px solid #10b981;
-            padding: 1rem;
-            border-radius: 6px;
-            text-align: left;
-            font-size: 0.95rem;
-            color: #d1fae5;
-            opacity: 0;
-            animation: slideUp 0.6s ease-out 1.6s forwards;
-        }
-
-        .draft-label {
-            font-weight: 600;
-            color: #10b981;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        /* Section 5 - Compliance */
-        #compliance {
-            background: linear-gradient(180deg, #1a0020 0%, #0a0a0f 100%);
-        }
-
-        .compliance-table {
-            width: 100%;
-            max-width: 700px;
-            margin: 2rem auto;
-            border-collapse: collapse;
-        }
-
-        .compliance-table th {
-            background: rgba(139, 92, 246, 0.1);
-            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: #8b5cf6;
-        }
-
-        .compliance-table td {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #9ca3af;
-        }
-
-        .compliance-row {
-            animation: fadeInUp 0.6s ease-out forwards;
-            opacity: 0;
-        }
-
-        .compliance-row:nth-child(1) { animation-delay: 0.3s; }
-        .compliance-row:nth-child(2) { animation-delay: 0.5s; }
-        .compliance-row:nth-child(3) { animation-delay: 0.7s; }
-        .compliance-row:nth-child(4) { animation-delay: 0.9s; }
-
-        .status-badge {
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .status-good {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-        }
-
-        .status-warning {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-        }
-
-        .compliance-counter {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #10b981;
-            margin-top: 2rem;
-        }
-
-        /* Section 6 - Maintenance */
-        #maintenance {
-            background: linear-gradient(180deg, #0a0a0f 0%, #1a0033 100%);
-        }
-
-        .timeline {
-            position: relative;
-            max-width: 600px;
-            margin: 2rem auto;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 30px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(180deg, #3b82f6 0%, #8b5cf6 50%, transparent 100%);
-        }
-
-        .timeline-item {
-            margin-bottom: 2rem;
-            padding-left: 100px;
-            position: relative;
-            opacity: 0;
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .timeline-item:nth-child(1) { animation-delay: 0.2s; }
-        .timeline-item:nth-child(2) { animation-delay: 0.4s; }
-        .timeline-item:nth-child(3) { animation-delay: 0.6s; }
-        .timeline-item:nth-child(4) { animation-delay: 0.8s; }
-        .timeline-item:nth-child(5) { animation-delay: 1s; }
-        .timeline-item:nth-child(6) { animation-delay: 1.2s; }
-
-        .timeline-dot {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .timeline-content {
-            background: rgba(30, 30, 45, 0.8);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .timeline-time {
-            color: #3b82f6;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .timeline-text {
-            color: #9ca3af;
-            margin-top: 0.3rem;
-        }
-
-        .timeline-footer {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 1.1rem;
-            color: #10b981;
-            font-weight: 600;
-        }
-
-        /* Section 7 - Stats */
-        #stats {
-            background: linear-gradient(135deg, #1a0020 0%, #0f3460 100%);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            opacity: 0;
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .stat-card:nth-child(1) { animation-delay: 0.2s; }
-        .stat-card:nth-child(2) { animation-delay: 0.4s; }
-        .stat-card:nth-child(3) { animation-delay: 0.6s; }
-        .stat-card:nth-child(4) { animation-delay: 0.8s; }
-
-        .stat-large {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-desc {
-            color: #9ca3af;
-            font-size: 1rem;
-        }
-
-        /* Section 8 - Built for QLD */
-        #built-for-qld {
-            background: linear-gradient(135deg, #0a0a0f 0%, #0a3f2e 50%, #0a0a0f 100%);
-        }
-
-        .features-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            max-width: 900px;
-            margin: 2rem auto;
-        }
-
-        .feature-item {
-            background: rgba(16, 185, 129, 0.08);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 8px;
-            padding: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-            opacity: 0;
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .feature-item:nth-child(1) { animation-delay: 0.2s; }
-        .feature-item:nth-child(2) { animation-delay: 0.4s; }
-        .feature-item:nth-child(3) { animation-delay: 0.6s; }
-        .feature-item:nth-child(4) { animation-delay: 0.8s; }
-        .feature-item:nth-child(5) { animation-delay: 1s; }
-        .feature-item:nth-child(6) { animation-delay: 1.2s; }
-
-        .feature-check {
-            color: #10b981;
-            font-weight: 700;
-            font-size: 1.3rem;
-            flex-shrink: 0;
-        }
-
-        .feature-text {
-            color: #e5e7eb;
-            line-height: 1.5;
-        }
-
-        .feature-text strong {
-            color: #10b981;
-        }
-
-        /* Section 9 - CTA */
-        #cta {
-            background: linear-gradient(180deg, #0a0a0f 0%, #1a0020 50%, #0a0a0f 100%);
-            padding: 3rem 2rem;
-        }
-
-        .cta-content {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .cta-subtext {
-            font-size: 1.1rem;
-            color: #9ca3af;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(30, 30, 45, 0.8);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            color: #e5e7eb;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-        }
-
-        .form-button {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .form-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
-        }
-
-        .form-button:active {
-            transform: translateY(0);
-        }
-
-        .footer-links {
-            margin-top: 2rem;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            font-size: 0.95rem;
-        }
-
-        .footer-links a {
-            color: #9ca3af;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: #3b82f6;
-        }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            .opening-headline {
-                font-size: 2.5rem;
-                min-height: auto;
-            }
-
-            h2 {
-                font-size: 2rem;
-            }
-
-            .problem-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .app-body {
-                grid-template-columns: 1fr;
-            }
-
-            .app-sidebar {
-                display: none;
-            }
-
-            .stat-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .features-list {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tenantflow — Product Demo Video</title>
+  <meta name="description" content="Watch Tenantflow in action — AI-powered property management built from the ground up for Queensland legislation (RTRA Act 2008).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--blue:#1d4ed8;--purple:#7c3aed;--dark:#0f172a;--mid:#1e293b;}
+    html,body{height:100%;font-family:'Inter',sans-serif;background:var(--dark);color:#fff;overflow-x:hidden;}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);padding:0 5%;}
+    .nav-inner{display:flex;align-items:center;justify-content:space-between;height:60px;max-width:1200px;margin:0 auto;}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .nav-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px;}
+    .nav-brand{font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
+    .nav-right{display:flex;align-items:center;gap:16px;}
+    .badge{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a78bfa;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:0.3px;}
+    .btn-nav{background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:7px;text-decoration:none;transition:background 0.2s;}
+    .btn-nav:hover{background:#1e40af;}
+
+    /* HERO */
+    .page-hero{padding:100px 5% 40px;text-align:center;max-width:860px;margin:0 auto;}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#a78bfa;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:20px;letter-spacing:0.3px;}
+    .hero-eyebrow-dot{width:5px;height:5px;border-radius:50%;background:#a78bfa;animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+    .page-hero h1{font-size:clamp(28px,4vw,52px);font-weight:900;line-height:1.08;letter-spacing:-1.5px;color:#fff;margin-bottom:14px;}
+    .page-hero h1 .grad{background:linear-gradient(135deg,#60a5fa,#a78bfa 55%,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .page-hero p{font-size:16px;color:rgba(255,255,255,0.5);max-width:580px;margin:0 auto 32px;line-height:1.65;}
+
+    /* VIDEO WRAPPER */
+    .video-section{padding:0 5% 60px;max-width:1100px;margin:0 auto;}
+    .video-shell{border-radius:16px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.07),0 40px 80px rgba(0,0,0,0.6);}
+    .video-topbar{background:#1e293b;padding:10px 16px;display:flex;align-items:center;gap:6px;}
+    .vtb-dot{width:10px;height:10px;border-radius:50%;}
+    .vtb-url{flex:1;text-align:center;font-size:11px;color:rgba(255,255,255,0.25);font-family:monospace;background:rgba(0,0,0,0.3);padding:3px 12px;border-radius:4px;max-width:260px;margin:0 auto;}
+    video{display:block;width:100%;background:#000;}
+
+    /* CHAPTER TAGS */
+    .chapters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 8px;}
+    .ch{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.55);font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;cursor:default;}
+    .ch span{color:#60a5fa;font-weight:700;margin-right:4px;}
+
+    /* RTRA CALLOUT */
+    .rtra-band{background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(124,58,237,0.08));border:1px solid rgba(99,102,241,0.2);border-radius:14px;padding:28px 32px;margin:40px auto;max-width:900px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;}
+    .rtra-icon{font-size:36px;}
+    .rtra-text h3{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;}
+    .rtra-text p{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.65;}
+    .rtra-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+    .rtra-tag{background:rgba(99,102,241,0.15);color:#a78bfa;font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;}
+
+    /* FEATURE PILLS */
+    .features-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:40px auto;max-width:900px;}
+    .feat-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 16px;}
+    .feat-pill-icon{font-size:18px;}
+    .feat-pill-text{font-size:12px;}
+    .feat-pill-text strong{display:block;color:#fff;font-weight:700;margin-bottom:1px;}
+    .feat-pill-text span{color:rgba(255,255,255,0.4);font-size:11px;}
+
+    /* CTA */
+    .demo-cta{text-align:center;padding:40px 5% 80px;}
+    .demo-cta h2{font-size:clamp(22px,3vw,36px);font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:10px;}
+    .demo-cta p{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:28px;}
+    .cta-buttons{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;padding:13px 24px;font-size:14px;border-radius:9px;text-decoration:none;font-weight:700;display:inline-flex;align-items:center;gap:6px;transition:box-shadow 0.2s,transform 0.2s;box-shadow:0 6px 24px rgba(99,102,241,0.3);}
+    .btn-primary:hover{box-shadow:0 10px 32px rgba(99,102,241,0.45);transform:translateY(-1px);}
+    .btn-outline{border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);background:transparent;padding:13px 24px;font-size:14px;border-radius:9px;text-decoration:none;font-weight:600;transition:all 0.2s;}
+    .btn-outline:hover{border-color:rgba(255,255,255,0.3);color:#fff;}
+
+    /* FOOTER */
+    footer{border-top:1px solid rgba(255,255,255,0.06);padding:24px 5%;text-align:center;}
+    footer p{font-size:12px;color:rgba(255,255,255,0.2);}
+    footer a{color:rgba(255,255,255,0.35);text-decoration:none;margin:0 10px;}
+    footer a:hover{color:rgba(255,255,255,0.6);}
+
+    @media(max-width:600px){
+      .rtra-band{grid-template-columns:1fr;}.rtra-icon{display:none;}
+      .feat-pill{width:100%;}
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <header>
-        <div class="nav-container">
-            <a href="index.html" class="logo">Tenantflow</a>
-            <div class="nav-links">
-                <span class="demo-badge">PRODUCT DEMO</span>
-                <div class="other-demos">
-                    <a href="demo-maintenance.html">Maintenance</a>
-                    <a href="demo-tenants.html">Tenants</a>
-                    <a href="demo-compliance.html">Compliance</a>
-                </div>
-                <a href="app.html">Live Demo</a>
-            </div>
-        </div>
-    </header>
 
-    <main>
-        <!-- Section 1: Opening Hook -->
-        <section id="opening">
-            <div class="section-content">
-                <h1 class="opening-headline">
-                    <span class="typewriter">Queensland property management is broken.</span>
-                </h1>
-                <p class="opening-subtext">80% of a PM's day is emails, compliance paperwork, and chasing contractors. None of it requires a human.</p>
-                <div class="opening-cta">
-                    <div class="until-now">Until now.</div>
-                </div>
-            </div>
-        </section>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-mark">T</div>
+      <span class="nav-brand">Tenantflow</span>
+    </a>
+    <div class="nav-right">
+      <span class="badge">&#9654; Product Demo</span>
+      <a href="app.html" class="btn-nav">Try Live Demo</a>
+    </div>
+  </div>
+</nav>
 
-        <!-- Section 2: The Problem -->
-        <section id="problem">
-            <div class="section-content">
-                <h2>The Problem</h2>
-                <p class="subtitle">Three obstacles that slow you down every single day</p>
-                <div class="problem-grid">
-                    <div class="problem-card animate-on-scroll">
-                        <div class="problem-icon">🕐</div>
-                        <div class="problem-stat">47 emails a day</div>
-                        <div class="problem-desc">The average Queensland PM receives 47 tenant & owner emails daily. Each one manually read, classified, and responded to.</div>
-                    </div>
-                    <div class="problem-card animate-on-scroll">
-                        <div class="problem-icon">⚖️</div>
-                        <div class="problem-stat">8 compliance deadlines</div>
-                        <div class="problem-desc">Smoke alarms, safety switches, bond lodgements, entry notices, rent increase rules — the average portfolio has 8 active compliance deadlines.</div>
-                    </div>
-                    <div class="problem-card animate-on-scroll">
-                        <div class="problem-icon">😰</div>
-                        <div class="problem-stat">4 hours on maintenance</div>
-                        <div class="problem-desc">A single urgent repair takes an average of 4 hours to coordinate across tenant, owner, and contractor. Tenantflow does it in 8 minutes.</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<div class="page-hero">
+  <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Built for Queensland Property Managers</div>
+  <h1>See Tenantflow<br><span class="grad">in action.</span></h1>
+  <p>Watch how Tenantflow handles the workflows that consume most of your day — built from the ground up for the RTRA Act 2008, not retrofitted to it.</p>
+</div>
 
-        <!-- Section 3: Product Intro -->
-        <section id="product-intro">
-            <div class="section-content">
-                <h2>Meet Tenantflow.</h2>
-                <p class="subtitle">The AI-first property management platform built exclusively for Queensland.</p>
-                <div class="app-mockup">
-                    <div class="app-header">
-                        <div class="app-dots"></div>
-                        <div class="app-dots"></div>
-                        <div class="app-dots"></div>
-                    </div>
-                    <div class="app-body">
-                        <div class="app-sidebar">
-                            <div class="app-nav-item">Dashboard</div>
-                            <div class="app-nav-item">Inbox</div>
-                            <div class="app-nav-item">Properties</div>
-                            <div class="app-nav-item">Compliance</div>
-                            <div class="app-nav-item">Maintenance</div>
-                            <div class="app-nav-item">Reports</div>
-                        </div>
-                        <div class="app-content">
-                            <div>
-                                <div class="stat-row">
-                                    <div class="stat-box">
-                                        <div class="stat-number">78</div>
-                                        <div class="stat-label">Properties</div>
-                                    </div>
-                                    <div class="stat-box">
-                                        <div class="stat-number">$42K</div>
-                                        <div class="stat-label">Weekly</div>
-                                    </div>
-                                    <div class="stat-box">
-                                        <div class="stat-number">3</div>
-                                        <div class="stat-label">Urgent Items</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="text-align: center;">
-                                <div class="ai-badge">🤖 AI Inbox Active</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<div class="video-section">
+  <div class="video-shell">
+    <div class="video-topbar">
+      <div class="vtb-dot" style="background:#ef4444;"></div>
+      <div class="vtb-dot" style="background:#f59e0b;"></div>
+      <div class="vtb-dot" style="background:#22c55e;"></div>
+      <div class="vtb-url">tenantflow.app/dashboard</div>
+    </div>
+    <video controls poster="" preload="metadata">
+      <source src="tenantflow-demo.mp4" type="video/mp4">
+      Your browser doesn't support HTML5 video.
+    </video>
+  </div>
 
-        <!-- Section 4: AI Inbox -->
-        <section id="ai-inbox">
-            <div class="section-content">
-                <h2>Your AI reads every email. Instantly.</h2>
-                <p class="subtitle">No more manual triage. Just action.</p>
-                <div class="email-demo">
-                    <div class="email-from">📧 From: Sarah Thompson</div>
-                    <div class="email-content">
-                        "Hi, our hot water isn't working. It's been 2 days. Can someone please come fix this? The kids can't have hot showers..."
-                    </div>
-                    <div class="classification-badge">🔴 URGENT REPAIR — RTRA s.185(2)(g)</div>
-                    <div class="draft-response">
-                        <div class="draft-label">📝 Draft Response:</div>
-                        <div>"Hi Sarah, Thank you for reporting this. As an urgent repair under Queensland law, the owner is required to act within 24 hours. I've notified them immediately. A plumber will be contacted today. Best, Your PM"</div>
-                    </div>
-                    <p style="text-align: center; color: #9ca3af; margin-top: 1.5rem; font-size: 0.95rem;">Drafted. Ready to send. One click.</p>
-                </div>
-            </div>
-        </section>
+  <div class="chapters">
+    <div class="ch"><span>0:00</span>The Problem</div>
+    <div class="ch"><span>0:05</span>The Solution</div>
+    <div class="ch"><span>0:10</span>AI Inbox</div>
+    <div class="ch"><span>0:16</span>Rent Arrears</div>
+    <div class="ch"><span>0:21</span>Compliance</div>
+    <div class="ch"><span>0:27</span>Owner Reports</div>
+    <div class="ch"><span>0:31</span>Get Early Access</div>
+  </div>
+</div>
 
-        <!-- Section 5: Compliance -->
-        <section id="compliance">
-            <div class="section-content">
-                <h2>Never miss a Queensland deadline again.</h2>
-                <p class="subtitle">Compliance tracking you can trust</p>
-                <table class="compliance-table">
-                    <thead>
-                        <tr>
-                            <th>Property</th>
-                            <th>Requirement</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="compliance-row">
-                            <td>45 Maple Street, Brisbane</td>
-                            <td>Smoke Alarm Test</td>
-                            <td><span class="status-badge status-good">✓ Compliant</span></td>
-                        </tr>
-                        <tr class="compliance-row">
-                            <td>12 Oak Avenue, Gold Coast</td>
-                            <td>Safety Switch Install</td>
-                            <td><span class="status-badge status-good">✓ Compliant</span></td>
-                        </tr>
-                        <tr class="compliance-row">
-                            <td>78 River Road, Sunshine Coast</td>
-                            <td>Bond Lodgement</td>
-                            <td><span class="status-badge status-good">✓ Compliant</span></td>
-                        </tr>
-                        <tr class="compliance-row">
-                            <td>33 Elm Street, Brisbane</td>
-                            <td>Entry Notice (24h)</td>
-                            <td><span class="status-badge status-warning">⚠ DUE</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="compliance-counter">23 compliance events tracked automatically this month</div>
-            </div>
-        </section>
+<div class="rtra-band" style="margin-left:auto;margin-right:auto;">
+  <div class="rtra-icon">⚖️</div>
+  <div class="rtra-text">
+    <h3>Built from the ground up for Queensland legislation</h3>
+    <p>Tenantflow isn't a generic platform with a Queensland settings toggle. Every notice period, form number, and compliance deadline is mapped directly to the <em>Residential Tenancies and Rooming Accommodation Act 2008</em>. No guesswork, no "check with your solicitor" disclaimers — just correct, confident action every time.</p>
+    <div class="rtra-tags">
+      <span class="rtra-tag">RTRA Act 2008</span>
+      <span class="rtra-tag">Form 11 &amp; 12</span>
+      <span class="rtra-tag">s.281 Arrears</span>
+      <span class="rtra-tag">s.192 Entry Notices</span>
+      <span class="rtra-tag">s.166 Smoke Alarms</span>
+      <span class="rtra-tag">s.143 Bond Lodgement</span>
+      <span class="rtra-tag">Form 18a Agreements</span>
+      <span class="rtra-tag">QCAT Bundles</span>
+    </div>
+  </div>
+</div>
 
-        <!-- Section 6: Maintenance Workflow -->
-        <section id="maintenance">
-            <div class="section-content">
-                <h2>Urgent repairs handled in 8 minutes.</h2>
-                <p class="subtitle">What used to take hours now takes minutes</p>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-dot">1</div>
-                        <div class="timeline-content">
-                            <div class="timeline-time">7:42am</div>
-                            <div class="timeline-text">Tenant reports hot water fault</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot">2</div>
-                        <div class="timeline-content">
-                            <div class="timeline-time">7:42am</div>
-                            <div class="timeline-text">AI classifies: RTRA urgent repair</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot">3</div>
-                        <div class="timeline-content">
-                            <div class="timeline-time">7:43am</div>
-                            <div class="timeline-text">Owner notified with cost estimate</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot">4</div>
-                        <div class="timeline-content">
-                            <div class="timeline-time">8:15am</div>
-                            <div class="timeline-text">Owner approves, plumber booked</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot">5</div>
-                        <div class="timeline-content">
-                            <div class="timeline-time">8:16am</div>
-                            <div class="timeline-text">Tenant notified of booking</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot">6</div>
-                        <div class="timeline-content">
-                            <div class="timeline-time">12:45pm</div>
-                            <div class="timeline-text">Job complete, invoice filed</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="timeline-footer">Total PM time invested: 0 minutes</div>
-            </div>
-        </section>
+<div class="features-row">
+  <div class="feat-pill">
+    <div class="feat-pill-icon">🤖</div>
+    <div class="feat-pill-text"><strong>AI Inbox Triage</strong><span>Classifies every email instantly</span></div>
+  </div>
+  <div class="feat-pill">
+    <div class="feat-pill-icon">💰</div>
+    <div class="feat-pill-text"><strong>Rent Arrears Automation</strong><span>Form 11 → Form 12 → QCAT</span></div>
+  </div>
+  <div class="feat-pill">
+    <div class="feat-pill-icon">✅</div>
+    <div class="feat-pill-text"><strong>Compliance Calendar</strong><span>Every obligation tracked</span></div>
+  </div>
+  <div class="feat-pill">
+    <div class="feat-pill-icon">📊</div>
+    <div class="feat-pill-text"><strong>Owner Reports</strong><span>Auto-generated in 30 seconds</span></div>
+  </div>
+  <div class="feat-pill">
+    <div class="feat-pill-icon">📄</div>
+    <div class="feat-pill-text"><strong>Smart Form Generation</strong><span>Form 18a, 9, 11, 12 ready instantly</span></div>
+  </div>
+  <div class="feat-pill">
+    <div class="feat-pill-icon">🔧</div>
+    <div class="feat-pill-text"><strong>Maintenance Workflows</strong><span>RTRA s.185 obligations built in</span></div>
+  </div>
+</div>
 
-        <!-- Section 7: Stats -->
-        <section id="stats">
-            <div class="section-content">
-                <h2>By The Numbers</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-large counter" data-target="93">0</div>
-                        <div class="stat-desc">% Compliance Score</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-large counter" data-target="8">0</div>
-                        <div class="stat-desc">Minutes to Resolve</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-large counter" data-target="47">0</div>
-                        <div class="stat-desc">Emails Processed Daily</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-large counter" data-target="0">0</div>
-                        <div class="stat-desc">Manual Forms This Month</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<div class="demo-cta">
+  <h2>Ready to try it yourself?</h2>
+  <p>Explore the live interactive demo — no login required.</p>
+  <div class="cta-buttons">
+    <a href="app.html" class="btn-primary">&#9654; Try the Live Demo</a>
+    <a href="index.html#early-access" class="btn-outline">Get Early Access</a>
+  </div>
+</div>
 
-        <!-- Section 8: Built for QLD -->
-        <section id="built-for-qld">
-            <div class="section-content">
-                <h2>Built around Queensland law. Not retrofitted to it.</h2>
-                <p class="subtitle">Purpose-built for your market</p>
-                <div class="features-list">
-                    <div class="feature-item">
-                        <div class="feature-check">✓</div>
-                        <div class="feature-text"><strong>RTRA Act 2008</strong> — urgent repair classifications built in</div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-check">✓</div>
-                        <div class="feature-text"><strong>Form 18a tenancy agreements</strong> — auto-generated</div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-check">✓</div>
-                        <div class="feature-text"><strong>RTA bond lodgement</strong> — automated</div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-check">✓</div>
-                        <div class="feature-text"><strong>Smoke alarm compliance</strong> — 2025 QLD amendments</div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-check">✓</div>
-                        <div class="feature-text"><strong>24-hour entry notice</strong> — requirements built in</div>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-check">✓</div>
-                        <div class="feature-text"><strong>Rent increase rules</strong> — 12-month minimum enforced</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<footer>
+  <p>
+    <a href="index.html">Home</a>
+    <a href="app.html">Live Demo</a>
+    <a href="demo-inbox.html">AI Inbox Demo</a>
+    <a href="demo-arrears.html">Arrears Demo</a>
+  </p>
+  <p style="margin-top:12px;">© 2026 Tenantflow. Built for Queensland, Australia.</p>
+</footer>
 
-        <!-- Section 9: CTA -->
-        <section id="cta">
-            <div class="section-content cta-content">
-                <h2>Get early access.</h2>
-                <p class="cta-subtext">Join Queensland property managers already on the list. Early access members get priority onboarding and lifetime discounted pricing.</p>
-                <form id="email-form">
-                    <div class="form-group">
-                        <input type="email" class="form-input" placeholder="Your email address" required>
-                    </div>
-                    <button type="submit" class="form-button">Notify Me</button>
-                </form>
-                <div class="footer-links">
-                    <a href="index.html">Home</a>
-                    <a href="app.html">Live Demo</a>
-                    <a href="demo-maintenance.html">Other Demos</a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        // Typewriter effect
-        const typewriter = document.querySelector('.typewriter');
-        const text = typewriter.textContent;
-        typewriter.textContent = '';
-        let index = 0;
-
-        function type() {
-            if (index < text.length) {
-                typewriter.textContent += text.charAt(index);
-                index++;
-                setTimeout(type, 50);
-            }
-        }
-
-        type();
-
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.2,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.animate-on-scroll').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Counter animation
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
-                    entry.target.classList.add('counted');
-                    const target = parseInt(entry.target.dataset.target);
-                    let current = 0;
-                    const increment = Math.ceil(target / 40);
-
-                    const interval = setInterval(() => {
-                        current += increment;
-                        if (current >= target) {
-                            current = target;
-                            clearInterval(interval);
-                        }
-                        entry.target.textContent = current;
-                    }, 30);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.counter').forEach(el => {
-            counterObserver.observe(el);
-        });
-
-        // Form submission
-        document.getElementById('email-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = this.querySelector('input[type="email"]').value;
-
-            fetch('https://formsubmit.co/ajax/waynec@varealtyapp.com', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    message: 'Early access request from demo'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Thanks! Check your email for confirmation.');
-                this.reset();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Signed up! We\'ll be in touch soon.');
-            });
-        });
-
-        // Smooth auto-scroll to next section after opening
-        setTimeout(() => {
-            // Let user see opening, then auto-scroll
-            document.getElementById('problem').scrollIntoView({ behavior: 'smooth' });
-        }, 5000);
-    </script>
 </body>
 </html>
