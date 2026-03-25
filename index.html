@@ -713,10 +713,19 @@ function submitAccess() {
       _subject: '🏠 New Tenantflow Early Access Signup',
       _captcha: 'false',
       _template: 'table',
+      _replyto: email,
+      _autoresponse: "Hi there,\n\nThank you for joining the Tenantflow early access list. You're one of the first Queensland property managers to get a look at what we're building — and we genuinely appreciate it.\n\n────────────────────────────\nWHAT IS TENANTFLOW?\n────────────────────────────\n\nTenantflow is AI-powered property management software built from the ground up for Queensland legislation. It handles the workflows that consume most of your day — automatically, and in full compliance with the RTRA Act.\n\nHere's what it does:\n\n→ AI Inbox — classifies and responds to every tenant message in under 4 minutes\n→ Compliance Dashboard — tracks smoke alarms, safety switches, and rent notices across your whole portfolio in one view\n→ Tenant Onboarding — AI screens applicants, prepares Form 18a, and lodges RTA bond automatically\n→ Rent Arrears Management — from missed payment to QCAT-ready tribunal package, every step handled\n→ Owner Reports — beautiful financial statements generated in 30 seconds, auto-delivered on the 1st\n→ Maintenance — urgent repair workflows with built-in RTRA s.185 24-hour obligation tracking\n\nYou can explore the full live demo right now at:\nhttps://tenantflow-app.github.io/tenantflow\n\n────────────────────────────\nONE QUESTION FOR YOU\n────────────────────────────\n\nWe're building the roadmap based on what Queensland PMs actually need most. Which of these would you prioritise first?\n\n  A) Trust Accounting — full receipting, bank reconciliation & ABA export\n  B) Tenant Portal — mobile app for rent payments, maintenance & lease docs\n  C) E-Signatures — legally binding digital signing of Form 18a agreements\n  D) Mobile Inspections — iOS & Android app with photo capture & offline mode\n\nJust hit reply with your choice (A, B, C or D). It takes 10 seconds and directly shapes what we build next.\n\n────────────────────────────\n\nWe'll keep you updated as we get closer to launch. In the meantime, feel free to reply to this email with any questions or feedback — I read every one.\n\nWayne Carston\nTenantflow | Built for Queensland Property Managers\nhttps://tenantflow-app.github.io/tenantflow",
       source: 'tenantflow-app.github.io',
       message: 'A Queensland property manager just signed up for early access.'
     })
   }).catch(() => {}); // fail silently — UI is unaffected either way
+
+  // Also fire at Make.com webhook for rich HTML auto-response (requires Gmail connection in Make.com)
+  fetch('https://hook.eu1.make.com/ojk7hqep2bzd7fzpwhs3hpf3wkv4cscc', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, source: 'tenantflow-app.github.io', signedUpAt: new Date().toISOString() })
+  }).catch(() => {});
 
   document.getElementById('toast-msg').textContent = "You're on the early access list — we'll be in touch!";
   const toast = document.getElementById('toast');
