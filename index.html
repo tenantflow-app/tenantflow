@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tenantflow — AI-Powered Property Management for Queensland</title>
+<meta name="description" content="Tenantflow is the AI-first property management platform built specifically for Queensland property managers. Automate rent arrears, triage maintenance, stay compliant with the RTA.">
+<meta property="og:title" content="Tenantflow — AI Property Management for Queensland">
+<meta property="og:description" content="The AI-first property management platform for Queensland. See the live demo.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --blue:#1d4ed8;
+  --blue-light:#3b82f6;
+  --purple:#7c3aed;
+  --dark:#0f172a;
+  --mid:#1e293b;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --bg:#f8fafc;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;color:var(--text);background:#fff;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(226,232,240,0.6);padding:0 5%;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1200px;margin:0 auto;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px;}
+.nav-brand{font-size:18px;font-weight:800;color:var(--dark);letter-spacing:-0.5px;}
+.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-links a{font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{display:flex;align-items:center;gap:10px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:all 0.2s;}
+.btn-ghost{color:var(--muted);background:transparent;}
+.btn-ghost:hover{color:var(--text);background:var(--bg);}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 1px 3px rgba(29,78,216,0.3);}
+.btn-primary:hover{background:#1e40af;box-shadow:0 4px 12px rgba(29,78,216,0.4);}
+.btn-lg{padding:14px 28px;font-size:15px;border-radius:10px;}
+.btn-outline{background:transparent;color:var(--blue);border:1.5px solid var(--blue);}
+.btn-outline:hover{background:#eff6ff;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 5% 60px;position:relative;overflow:hidden;background:var(--dark);}
+.hero-bg{position:absolute;inset:0;pointer-events:none;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.06) 1px,transparent 1px);background-size:48px 48px;}
+.hero-glow1{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,0.18),transparent 65%);top:-100px;left:20%;}
+.hero-glow2{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(59,130,246,0.12),transparent 65%);bottom:0;right:10%;}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:860px;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#a78bfa;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:24px;letter-spacing:0.3px;}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#a78bfa;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+h1{font-size:clamp(36px,5.5vw,72px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-2px;margin-bottom:20px;}
+h1 .gradient{background:linear-gradient(135deg,#60a5fa 0%,#a78bfa 50%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:clamp(15px,2vw,19px);color:rgba(255,255,255,0.55);max-width:620px;margin:0 auto 36px;line-height:1.65;font-weight:400;}
+.hero-actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:48px;}
+.btn-hero-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;padding:14px 28px;font-size:15px;border-radius:10px;box-shadow:0 8px 30px rgba(99,102,241,0.35);display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;transition:all 0.2s;}
+.btn-hero-primary:hover{box-shadow:0 12px 40px rgba(99,102,241,0.5);transform:translateY(-1px);}
+.btn-hero-outline{border:1.5px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.75);padding:14px 28px;font-size:15px;border-radius:10px;background:rgba(255,255,255,0.04);display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;transition:all 0.2s;}
+.btn-hero-outline:hover{background:rgba(255,255,255,0.09);color:#fff;}
+.hero-stats{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-num{font-size:28px;font-weight:900;color:#fff;letter-spacing:-1px;}
+.stat-label{font-size:11px;color:rgba(255,255,255,0.4);font-weight:500;margin-top:2px;text-transform:uppercase;letter-spacing:0.8px;}
+.hero-divider{width:1px;height:40px;background:rgba(255,255,255,0.1);}
+
+/* APP PREVIEW */
+.preview-section{background:var(--dark);padding:0 5% 80px;}
+.preview-wrap{max-width:1100px;margin:0 auto;}
+.preview-shadow{border-radius:16px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);}
+.preview-bar{background:#1e293b;padding:10px 16px;display:flex;align-items:center;gap:6px;}
+.dot-r{width:10px;height:10px;border-radius:50%;background:#ef4444;}
+.dot-y{width:10px;height:10px;border-radius:50%;background:#f59e0b;}
+.dot-g{width:10px;height:10px;border-radius:50%;background:#22c55e;}
+.preview-url{flex:1;text-align:center;font-size:11px;color:rgba(255,255,255,0.3);font-family:monospace;}
+.preview-inner{width:100%;background:linear-gradient(180deg,#0f172a,#1a2744);display:grid;grid-template-columns:220px 1fr;min-height:480px;}
+.prev-sidebar{background:#1a2744;padding:16px 12px;display:flex;flex-direction:column;gap:2px;}
+.prev-logo-area{padding:8px;margin-bottom:12px;}
+.prev-logo-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
+.prev-logo-tag{font-size:10px;color:#64748b;margin-top:1px;}
+.prev-ai-dot{display:inline-flex;align-items:center;gap:4px;background:rgba(99,179,237,0.12);color:#63b3ed;font-size:9px;font-weight:600;padding:2px 6px;border-radius:12px;margin-top:4px;}
+.prev-nav{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;color:#94a3b8;font-size:12px;}
+.prev-nav.active{background:rgba(59,130,246,0.18);color:#93c5fd;}
+.pn-dot{width:14px;height:14px;border-radius:3px;background:#334155;flex-shrink:0;}
+.prev-badge{margin-left:auto;background:#ef4444;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;}
+.prev-main{background:#f0f4f8;padding:20px;}
+.prev-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.prev-title{font-size:16px;font-weight:700;color:#0f172a;}
+.prev-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.prev-kpi{background:#fff;border-radius:8px;padding:12px;border:1px solid #e2e8f0;}
+.prev-kpi-val{font-size:22px;font-weight:700;color:#0f172a;}
+.prev-kpi-lbl{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+.prev-kpi-chg{font-size:9px;margin-top:4px;}
+.prev-kpi-chg.up{color:#16a34a;}
+.prev-kpi-chg.warn{color:#d97706;}
+.prev-card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;overflow:hidden;}
+.prev-card-hdr{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:11px;font-weight:700;color:#0f172a;display:flex;align-items:center;justify-content:space-between;}
+.prev-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #f8fafc;font-size:10px;color:#475569;}
+.prev-dot-status{width:7px;height:7px;border-radius:50%;}
+.prev-ai-chip{background:#eff6ff;color:#1d4ed8;font-size:8px;font-weight:700;padding:2px 6px;border-radius:6px;margin-left:auto;}
+
+/* SOCIAL PROOF BAR */
+.social-bar{background:#f8fafc;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 5%;}
+.social-bar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap;}
+.social-item{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:500;}
+
+/* SECTIONS */
+section{padding:80px 5%;}
+.section-inner{max-width:1100px;margin:0 auto;}
+.section-label{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+h2{font-size:clamp(28px,4vw,44px);font-weight:800;color:var(--dark);letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px;}
+.section-sub{font-size:17px;color:var(--muted);max-width:560px;line-height:1.6;}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;}
+.feat-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px;transition:all 0.2s;}
+.feat-card:hover{box-shadow:0 12px 40px rgba(0,0,0,0.08);transform:translateY(-2px);border-color:rgba(59,130,246,0.25);}
+.feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:22px;}
+.feat-title{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.feat-tag{display:inline-flex;align-items:center;gap:4px;margin-top:14px;font-size:11px;font-weight:600;color:var(--blue);background:#eff6ff;padding:3px 10px;border-radius:20px;}
+
+/* HOW IT WORKS */
+.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:52px;}
+.how-steps{display:flex;flex-direction:column;gap:24px;}
+.how-step{display:flex;gap:16px;align-items:flex-start;}
+.step-num{width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-text h4{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.step-text p{font-size:13px;color:var(--muted);line-height:1.55;}
+.how-visual{background:var(--dark);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.how-visual-inner{padding:24px;}
+.how-vis-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+.email-mock{background:#1e293b;border-radius:8px;padding:14px;margin-bottom:12px;border-left:3px solid #f59e0b;}
+.em-from{font-size:11px;font-weight:700;color:#60a5fa;margin-bottom:3px;}
+.em-subj{font-size:12px;color:#e2e8f0;margin-bottom:4px;}
+.em-body{font-size:10px;color:#94a3b8;line-height:1.5;}
+.ai-response{background:#0f2d0f;border:1px solid #22c55e;border-radius:8px;padding:12px;display:flex;gap:10px;align-items:flex-start;}
+.ai-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;flex-shrink:0;}
+.ai-text{font-size:10px;color:#86efac;line-height:1.6;}
+.ai-actions{display:flex;gap:6px;margin-top:8px;}
+.ai-action-btn{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:default;}
+
+/* COMPLIANCE */
+.compliance-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:32px;}
+.comp-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start;}
+.comp-check{width:28px;height:28px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#16a34a;font-size:14px;font-weight:700;}
+.comp-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:3px;}
+.comp-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* QLD SPECIFIC */
+.qld-section{background:linear-gradient(135deg,#0f172a,#1e1b4b);padding:80px 5%;}
+.qld-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.qld-text h2{color:#fff;}
+.qld-text .section-sub{color:rgba(255,255,255,0.6);}
+.qld-tag{display:inline-block;background:rgba(99,102,241,0.2);color:#a78bfa;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:16px;}
+.qld-points{display:flex;flex-direction:column;gap:12px;margin-top:28px;}
+.qld-point{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.7);}
+.qld-dot{width:6px;height:6px;border-radius:50%;background:#a78bfa;flex-shrink:0;}
+.qld-cards{display:flex;flex-direction:column;gap:12px;}
+.qld-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;}
+.qld-card-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
+.qld-card-val{font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;}
+.qld-card-tag{display:inline-block;background:rgba(34,197,94,0.15);color:#4ade80;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;margin-top:6px;}
+
+/* ROADMAP PREVIEW */
+.roadmap-preview{background:var(--bg);}
+.rm-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px;}
+.rm-prev-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;}
+.rm-prev-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.rm-prev-card.q1::after{background:linear-gradient(90deg,var(--blue),#60a5fa);}
+.rm-prev-card.q3::after{background:linear-gradient(90deg,#f59e0b,#fb923c);}
+.rm-prev-card.future::after{background:linear-gradient(90deg,var(--purple),#a78bfa);}
+.rm-prev-icon{font-size:28px;margin-bottom:12px;}
+.rm-prev-title{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.rm-prev-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.rm-prev-eta{font-size:10px;font-weight:700;margin-top:12px;padding:3px 10px;border-radius:20px;display:inline-block;}
+.eta-q1{background:#eff6ff;color:var(--blue);}
+.eta-q3{background:#fff7ed;color:#c2410c;}
+.eta-future{background:#f5f3ff;color:var(--purple);}
+.rm-cta{text-align:center;margin-top:40px;}
+
+/* CTA SECTION */
+.cta-section{background:linear-gradient(135deg,var(--blue),var(--purple));padding:80px 5%;text-align:center;}
+.cta-section h2{color:#fff;letter-spacing:-1px;}
+.cta-section p{color:rgba(255,255,255,0.75);font-size:17px;max-width:500px;margin:12px auto 36px;line-height:1.6;}
+.email-form{display:flex;align-items:center;gap:0;max-width:480px;margin:0 auto;background:rgba(255,255,255,0.1);border-radius:12px;border:1px solid rgba(255,255,255,0.2);overflow:hidden;padding:4px;}
+.email-input{flex:1;background:transparent;border:none;color:#fff;font-size:14px;padding:10px 14px;outline:none;font-family:'Inter',sans-serif;}
+.email-input::placeholder{color:rgba(255,255,255,0.45);}
+.email-submit{background:#fff;color:var(--blue);font-size:13px;font-weight:700;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.email-submit:hover{background:#eff6ff;}
+.form-note{font-size:11px;color:rgba(255,255,255,0.45);margin-top:10px;}
+.cta-btns{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px;flex-wrap:wrap;}
+.btn-cta-white{background:#fff;color:var(--blue);padding:14px 28px;font-size:15px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700;transition:all 0.2s;}
+.btn-cta-white:hover{background:#eff6ff;}
+.btn-cta-outline{border:1.5px solid rgba(255,255,255,0.4);color:#fff;background:transparent;padding:14px 28px;font-size:15px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;transition:all 0.2s;}
+.btn-cta-outline:hover{background:rgba(255,255,255,0.1);}
+
+/* FOOTER */
+footer{background:var(--dark);padding:48px 5% 32px;}
+.footer-inner{max-width:1100px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand{font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:8px;}
+.footer-tagline{font-size:13px;color:#475569;line-height:1.6;}
+.footer-col h4{font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;}
+.footer-col a{display:block;font-size:13px;color:#475569;text-decoration:none;margin-bottom:8px;transition:color 0.2s;}
+.footer-col a:hover{color:#94a3b8;}
+.footer-bottom{border-top:1px solid #1e293b;padding-top:24px;display:flex;align-items:center;justify-content:space-between;}
+.footer-copy{font-size:12px;color:#334155;}
+.footer-badges{display:flex;align-items:center;gap:8px;}
+.f-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:#1e293b;color:#475569;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:12px 20px;border-radius:10px;border:1px solid #1e293b;font-size:13px;font-weight:500;display:none;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:999;}
+.toast.show{display:flex;}
+.toast-icon{color:#22c55e;font-size:16px;}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .features-grid,.compliance-grid{grid-template-columns:1fr;}
+  .how-grid{grid-template-columns:1fr;}
+  .how-visual{display:none;}
+  .qld-inner{grid-template-columns:1fr;}
+  .qld-cards{display:none;}
+  .rm-cards{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .nav-links{display:none;}
+  .preview-inner{grid-template-columns:1fr;}
+  .prev-sidebar{display:none;}
+  .hero-stats{gap:24px;}
+}
+@media(max-width:480px){
+  .rm-cards{grid-template-columns:1fr;}
+  .hero-actions,.cta-btns{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-mark">T</div>
+      <span class="nav-brand">Tenantflow</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="demo.html">Demo video</a>
+    </div>
+    <div class="nav-cta">
+      <a href="app.html" class="btn btn-ghost">Live Demo</a>
+      <a href="#early-access" class="btn btn-primary">Get Early Access</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid"></div>
+    <div class="hero-glow1"></div>
+    <div class="hero-glow2"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge"><div class="hero-badge-dot"></div> Built for Queensland Property Managers</div>
+    <h1>Property management,<br><span class="gradient">powered by AI.</span></h1>
+    <p class="hero-sub">Tenantflow automates the repetitive work — triaging maintenance emails, chasing rent arrears, generating forms, and keeping you RTA-compliant — so you can focus on what actually matters.</p>
+    <div class="hero-actions">
+      <a href="app.html" class="btn-hero-primary">
+        &#9654; Try the Live Demo
+      </a>
+      <a href="demo.html" class="btn-hero-outline">
+        &#9654; Watch Demo Video
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">87%</div>
+        <div class="stat-label">Less manual follow-up</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="stat">
+        <div class="stat-num">4 hrs</div>
+        <div class="stat-label">Avg. lease signing time</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">QLD RTA compliant</div>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="stat">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">AI triage &amp; response</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP PREVIEW -->
+<section class="preview-section">
+  <div class="preview-wrap">
+    <div class="preview-shadow">
+      <div class="preview-bar">
+        <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+        <div class="preview-url">tenantflow.app/dashboard</div>
+      </div>
+      <div class="preview-inner">
+        <div class="prev-sidebar">
+          <div class="prev-logo-area">
+            <div class="prev-logo-name">Tenantflow</div>
+            <div class="prev-logo-tag">Property Management</div>
+            <div class="prev-ai-dot">&#9679; AI Active</div>
+          </div>
+          <div class="prev-nav active"><div class="pn-dot" style="background:#3b82f6;"></div>Dashboard</div>
+          <div class="prev-nav"><div class="pn-dot"></div>Properties</div>
+          <div class="prev-nav"><div class="pn-dot"></div>AI Inbox <span class="prev-badge">7</span></div>
+          <div class="prev-nav"><div class="pn-dot"></div>Tenants</div>
+          <div class="prev-nav"><div class="pn-dot"></div>Inspections</div>
+          <div class="prev-nav"><div class="pn-dot"></div>Maintenance</div>
+          <div class="prev-nav"><div class="pn-dot"></div>Compliance</div>
+          <div class="prev-nav"><div class="pn-dot"></div>Leases</div>
+          <div class="prev-nav"><div class="pn-dot"></div>Reports</div>
+        </div>
+        <div class="prev-main">
+          <div class="prev-header">
+            <div class="prev-title">Dashboard</div>
+            <div style="background:#eff6ff;color:#1d4ed8;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;">AI: 3 actions pending</div>
+          </div>
+          <div class="prev-kpis">
+            <div class="prev-kpi"><div class="prev-kpi-val">124</div><div class="prev-kpi-lbl">Properties</div><div class="prev-kpi-chg up">&#8593; 3 this month</div></div>
+            <div class="prev-kpi"><div class="prev-kpi-val" style="color:#ef4444;">8</div><div class="prev-kpi-lbl">Rent Arrears</div><div class="prev-kpi-chg warn">&#9888; 2 urgent</div></div>
+            <div class="prev-kpi"><div class="prev-kpi-val" style="color:#f59e0b;">11</div><div class="prev-kpi-lbl">Renewals Due</div><div class="prev-kpi-chg warn">Due in 60 days</div></div>
+            <div class="prev-kpi"><div class="prev-kpi-val" style="color:#16a34a;">98%</div><div class="prev-kpi-lbl">Occupancy</div><div class="prev-kpi-chg up">&#8593; Above avg</div></div>
+          </div>
+          <div class="prev-card">
+            <div class="prev-card-hdr">AI Inbox — Today <span style="font-size:10px;color:#64748b;font-weight:400;">7 unread</span></div>
+            <div class="prev-row"><div class="prev-dot-status" style="background:#f59e0b;"></div><strong style="color:#0f172a;">Sarah Mitchell</strong>&nbsp;Hot water not working — 14 Coral St<span class="prev-ai-chip">&#129302; Maintenance</span></div>
+            <div class="prev-row"><div class="prev-dot-status" style="background:#ef4444;"></div><strong style="color:#0f172a;">Tom Nguyen</strong>&nbsp;Rent 14 days overdue — $2,340<span class="prev-ai-chip">&#129302; Arrears</span></div>
+            <div class="prev-row"><div class="prev-dot-status" style="background:#3b82f6;"></div><strong style="color:#0f172a;">Priya Sharma</strong>&nbsp;Lease renewal enquiry — Unit 4/88<span class="prev-ai-chip">&#129302; Lease</span></div>
+            <div class="prev-row" style="border:none;"><div class="prev-dot-status" style="background:#22c55e;"></div><strong style="color:#0f172a;">Eastside Plumbing</strong>&nbsp;Job completed — Quote attached<span class="prev-ai-chip">&#129302; Invoice</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF BAR -->
+<div class="social-bar">
+  <div class="social-bar-inner">
+    <div class="social-item">&#11088; Built for Queensland legislation</div>
+    <div class="social-item">&#128737; RTA Act 2008 compliant</div>
+    <div class="social-item">&#9201; Saves 3–5 hrs per day</div>
+    <div class="social-item">&#9889; Powered by Claude AI</div>
+    <div class="social-item">&#128274; Data stays in Australia</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features" style="background:#fff;">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">What Tenantflow does</div>
+      <h2>Everything your day demands,<br>automated.</h2>
+      <p class="section-sub">From the first maintenance email to the final inspection report — Tenantflow handles the grind so you can manage more properties with less stress.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon" style="background:#eff6ff;">&#9993;</div>
+        <div class="feat-title">AI Inbox Triage</div>
+        <div class="feat-desc">Every incoming email is classified, prioritised, and actioned by AI. Maintenance requests auto-generate Form 9s. Arrears emails trigger the correct NCAT sequence. You just approve.</div>
+        <div class="feat-tag">&#129302; AI Powered</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-icon" style="background:#fef2f2;">&#128181;</div>
+        <div class="feat-title">Rent Arrears Automation</div>
+        <div class="feat-desc">Automatically detect overdue rent, classify days outstanding, send the right notice at the right time (Form 11 &#8594; Form 12 &#8594; NCAT), and track every action with a full audit trail.</div>
+        <div class="feat-tag">&#128203; QLD Compliant</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-3">
+        <div class="feat-icon" style="background:#f0fdf4;">&#128737;</div>
+        <div class="feat-title">Compliance Calendar</div>
+        <div class="feat-desc">Never miss a smoke alarm check, pool safety certificate, or CPD renewal. Tenantflow tracks every obligation with dates, responsible parties, and automatic deadline alerts.</div>
+        <div class="feat-tag">&#9989; Auto-Tracked</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon" style="background:#fdf4ff;">&#128196;</div>
+        <div class="feat-title">Smart Form Generation</div>
+        <div class="feat-desc">Form 18a tenancy agreements, entry notices, condition reports, and breach notices — pre-filled from your property data and ready to send in seconds, not hours.</div>
+        <div class="feat-tag">&#128196; Form 18a, 9, 11, 12</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon" style="background:#fff7ed;">&#128247;</div>
+        <div class="feat-title">Inspections &amp; Reports</div>
+        <div class="feat-desc">Schedule routine inspections, record room-by-room condition notes and photos, and auto-generate professional PDF reports for owners — all in under 20 minutes.</div>
+        <div class="feat-tag">&#128247; Photo Reports</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-icon" style="background:#f0f9ff;">&#128202;</div>
+        <div class="feat-title">Owner Statements &amp; Reports</div>
+        <div class="feat-desc">Auto-generate monthly owner financial statements, maintenance summaries, occupancy reports, and portfolio performance dashboards — all exportable to PDF with one click.</div>
+        <div class="feat-tag">&#128202; One-click PDF</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" style="background:var(--bg);">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">How it works</div>
+      <h2>Your AI assistant, always on.</h2>
+      <p class="section-sub">Tenantflow's AI reads, classifies, and acts on tenant communications — so your inbox stops being the bottleneck.</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-steps reveal">
+        <div class="how-step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <h4>Tenant emails arrive</h4>
+            <p>Maintenance requests, rent queries, lease questions — they all land in Tenantflow's unified inbox, synced live from Gmail or Outlook.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <h4>AI classifies and triages</h4>
+            <p>Claude AI reads each message, identifies the issue type, checks urgency against your portfolio data, and prepares the appropriate response and action.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <h4>You approve in one click</h4>
+            <p>The AI drafts the reply, pre-fills the relevant form, and queues the action. You review and approve — or let it auto-handle routine items.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <h4>Everything is documented</h4>
+            <p>Every action, reply, and form is logged to the property record with timestamps — creating an audit trail that protects you if anything ever goes to NCAT.</p>
+          </div>
+        </div>
+      </div>
+      <div class="how-visual reveal reveal-delay-2">
+        <div class="how-visual-inner">
+          <div class="how-vis-title">AI Inbox · Live</div>
+          <div class="email-mock">
+            <div class="em-from">Sarah Mitchell &middot; 14 Coral Street, Surfers Paradise</div>
+            <div class="em-subj">Hot water system not working</div>
+            <div class="em-body">Hi, the hot water has been cold since yesterday morning. We have a baby in the house. Can someone please come urgently? — Sarah</div>
+          </div>
+          <div class="ai-response">
+            <div class="ai-avatar">AI</div>
+            <div>
+              <div class="ai-text"><strong style="color:#4ade80;">Classified:</strong> Emergency Maintenance — Hot Water<br>Priority: <strong style="color:#fbbf24;">HIGH</strong> (infant in household)<br>RTA s.185: Respond within 24–48 hrs<br><br>Actions prepared: Entry notice (Form 9) &middot; Reply to tenant &middot; Alert plumber</div>
+              <div class="ai-actions">
+                <div class="ai-action-btn">&#10003; Approve All</div>
+                <div class="ai-action-btn">Edit</div>
+                <div class="ai-action-btn">View Form 9</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QLD COMPLIANCE -->
+<section class="qld-section">
+  <div class="qld-inner">
+    <div class="qld-text reveal">
+      <div class="qld-tag">&#127462;&#127482; Queensland Only</div>
+      <h2>Built from the ground up for Queensland law.</h2>
+      <p class="section-sub" style="color:rgba(255,255,255,0.6);">Tenantflow isn't a generic platform with an "Australian settings" toggle. Every notice, timeline, and obligation is mapped to the <em>Residential Tenancies and Rooming Accommodation Act 2008</em>.</p>
+      <div class="qld-points">
+        <div class="qld-point"><div class="qld-dot"></div>Correct Form 11 / Form 12 / NCAT timelines built in</div>
+        <div class="qld-point"><div class="qld-dot"></div>Entry notice periods (24hr min / 48hr routine) enforced automatically</div>
+        <div class="qld-point"><div class="qld-dot"></div>Smoke alarm compliance tracked under QLD legislation</div>
+        <div class="qld-point"><div class="qld-dot"></div>Form 18a agreements with all required disclosures</div>
+        <div class="qld-point"><div class="qld-dot"></div>Pool safety certificates and renewal tracking</div>
+        <div class="qld-point"><div class="qld-dot"></div>CPD hours monitoring for property managers</div>
+      </div>
+    </div>
+    <div class="qld-cards reveal reveal-delay-2">
+      <div class="qld-card">
+        <div class="qld-card-lbl">Breach Notice</div>
+        <div class="qld-card-val">Form 11 — Notice to remedy breach. AI detects arrears at Day 2, prepares notice at Day 7 with correct RTA wording.</div>
+        <div class="qld-card-tag">&#10003; RTA s.281</div>
+      </div>
+      <div class="qld-card">
+        <div class="qld-card-lbl">Entry Notice</div>
+        <div class="qld-card-val">Form 9 — Entry notice. Minimum 24-hr notice for urgent repairs, 48-hr for routine entry. Correct grounds pre-selected.</div>
+        <div class="qld-card-tag">&#10003; RTA s.192</div>
+      </div>
+      <div class="qld-card">
+        <div class="qld-card-lbl">Termination Notice</div>
+        <div class="qld-card-val">Form 12 — Notice to leave. Correct notice periods by ground: 2 days (non-payment), 14 days (serious breach), 2 months (end of tenancy).</div>
+        <div class="qld-card-tag">&#10003; RTA s.290</div>
+      </div>
+      <div class="qld-card">
+        <div class="qld-card-lbl">Tenancy Agreement</div>
+        <div class="qld-card-val">Form 18a — Generated from your property data, includes all required special conditions, rent payment terms, and bond disclosures.</div>
+        <div class="qld-card-tag">&#10003; RTA s.55</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLIANCE FEATURES -->
+<section style="background:#fff;">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Compliance &amp; risk</div>
+      <h2>Never be caught out again.</h2>
+      <p class="section-sub">Tenantflow tracks every compliance obligation across your entire portfolio and alerts you before deadlines — not after.</p>
+    </div>
+    <div class="compliance-grid" style="margin-top:40px;">
+      <div class="comp-item reveal"><div class="comp-check">&#10003;</div><div><div class="comp-title">Smoke Alarm Compliance</div><div class="comp-desc">Annual inspection tracking, contractor scheduling, and compliance certificates logged per property under Queensland Fire and Emergency Services requirements.</div></div></div>
+      <div class="comp-item reveal reveal-delay-1"><div class="comp-check">&#10003;</div><div><div class="comp-title">Pool Safety Certificates</div><div class="comp-desc">Certificate expiry tracking with 3-month, 1-month, and 2-week alerts. Auto-generates the required tenant notification documents on renewal.</div></div></div>
+      <div class="comp-item reveal"><div class="comp-check">&#10003;</div><div><div class="comp-title">CPD Hour Tracking</div><div class="comp-desc">Monitors Continuing Professional Development hours for each licensed property manager. Alerts when hours are running low before the annual renewal date.</div></div></div>
+      <div class="comp-item reveal reveal-delay-1"><div class="comp-check">&#10003;</div><div><div class="comp-title">Maintenance Response Times</div><div class="comp-desc">Tracks emergency vs routine maintenance response deadlines per RTA requirements. Escalates unresolved issues automatically to avoid liability exposure.</div></div></div>
+      <div class="comp-item reveal"><div class="comp-check">&#10003;</div><div><div class="comp-title">Bond Lodgement Tracking</div><div class="comp-desc">Confirms RTA bond lodgement within the mandatory 10-day window. Flags any outstanding lodgements with the correct corrective action steps.</div></div></div>
+      <div class="comp-item reveal reveal-delay-1"><div class="comp-check">&#10003;</div><div><div class="comp-title">Full Audit Trail</div><div class="comp-desc">Every action, notice, and communication is timestamped and stored. One-click NCAT bundle export compiles everything a tribunal needs in chronological order.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE DEMOS -->
+<section id="feature-demos" style="background:var(--bg);padding:80px 0;">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <div class="section-label">See it in action</div>
+      <h2>Watch the features that matter.</h2>
+      <p class="section-sub">Short, focused demos showing exactly how Tenantflow handles the workflows that take up most of your day.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;" class="features-grid reveal">
+      <a href="demo-maintenance.html" style="text-decoration:none;">
+        <div class="feat-card" style="cursor:pointer;">
+          <div class="feat-icon" style="background:#fff7ed;font-size:28px;">🔧</div>
+          <h3 style="margin-bottom:8px;">Maintenance Requests</h3>
+          <p style="color:#6b7280;font-size:14px;line-height:1.6;">See how Tenantflow handles an urgent repair from tenant SMS to completed job — including the QLD RTRA 24-hour obligation — automatically.</p>
+          <div style="margin-top:16px;font-size:13px;font-weight:700;color:#3b82f6;">Watch demo &#8594;</div>
+        </div>
+      </a>
+      <a href="demo-tenants.html" style="text-decoration:none;">
+        <div class="feat-card" style="cursor:pointer;">
+          <div class="feat-icon" style="background:#f0fdf4;font-size:28px;">👥</div>
+          <h3 style="margin-bottom:8px;">Tenant Onboarding</h3>
+          <p style="color:#6b7280;font-size:14px;line-height:1.6;">AI screens applicants, prepares QLD Form 18a, lodges bond with the RTA, and activates the tenant portal — all before your coffee gets cold.</p>
+          <div style="margin-top:16px;font-size:13px;font-weight:700;color:#10b981;">Watch demo &#8594;</div>
+        </div>
+      </a>
+      <a href="demo-compliance.html" style="text-decoration:none;">
+        <div class="feat-card" style="cursor:pointer;">
+          <div class="feat-icon" style="background:#f0fdfa;font-size:28px;">✅</div>
+          <h3 style="margin-bottom:8px;">QLD Compliance</h3>
+          <p style="color:#6b7280;font-size:14px;line-height:1.6;">Smoke alarms, safety switches, rent increases, lease renewals — one dashboard tracks every obligation across your whole portfolio.</p>
+          <div style="margin-top:16px;font-size:13px;font-weight:700;color:#14b8a6;">Watch demo &#8594;</div>
+        </div>
+      </a>
+    </div>
+    <div style="text-align:center;margin-top:32px;" class="reveal">
+      <a href="demo.html" style="font-size:14px;color:#6b7280;text-decoration:none;border:1px solid #e5e7eb;padding:10px 20px;border-radius:8px;display:inline-block;">&#9654; Watch the full product tour</a>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP PREVIEW -->
+<section id="roadmap" class="roadmap-preview">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">What's coming</div>
+      <h2>We're just getting started.</h2>
+      <p class="section-sub">The features Queensland property managers have been asking for — built in the order that matters most.</p>
+    </div>
+    <div class="rm-cards">
+      <div class="rm-prev-card q1 reveal"><div class="rm-prev-icon">&#127974;</div><div class="rm-prev-title">Trust Accounting</div><div class="rm-prev-desc">Full trust accounting with receipting, bank reconciliation, ABA export, and automated owner disbursements.</div><div class="rm-prev-eta eta-q1">Q2 2026</div></div>
+      <div class="rm-prev-card q1 reveal reveal-delay-1"><div class="rm-prev-icon">&#128242;</div><div class="rm-prev-title">Tenant Portal</div><div class="rm-prev-desc">Mobile-friendly portal for maintenance requests, rent payment via PayID, and lease document access.</div><div class="rm-prev-eta eta-q1">Q2 2026</div></div>
+      <div class="rm-prev-card q1 reveal reveal-delay-2"><div class="rm-prev-icon">&#9997;</div><div class="rm-prev-title">E-Signatures</div><div class="rm-prev-desc">Legally binding digital signatures on Form 18a agreements, renewals, and condition reports.</div><div class="rm-prev-eta eta-q1">Q2 2026</div></div>
+      <div class="rm-prev-card q3 reveal reveal-delay-3"><div class="rm-prev-icon">&#128247;</div><div class="rm-prev-title">Mobile Inspections</div><div class="rm-prev-desc">iOS &amp; Android app for on-site inspections with photo capture, 360&#176; photos, and offline mode.</div><div class="rm-prev-eta eta-q3">Q3 2026</div></div>
+    </div>
+    <div class="rm-cta reveal">
+      <a href="app.html" class="btn btn-outline" style="padding:12px 24px;font-size:14px;">View full roadmap &amp; vote on features &#8594;</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / EARLY ACCESS -->
+<section id="early-access" class="cta-section">
+  <div style="max-width:700px;margin:0 auto;">
+    <h2>Get early access.</h2>
+    <p>Be among the first Queensland property managers to use Tenantflow. Early access members get priority onboarding, lifetime discounted pricing, and direct input into the roadmap.</p>
+    <div class="cta-btns">
+      <a href="app.html" class="btn-cta-white">&#9654; Try the live demo</a>
+      <a href="demo.html" class="btn-cta-outline">&#9654; Watch demo video</a>
+    </div>
+    <div class="email-form">
+      <input class="email-input" type="email" placeholder="your@agencyemail.com.au" id="access-email">
+      <button class="email-submit" onclick="submitAccess()">Notify me</button>
+    </div>
+    <div class="form-note">No spam. Unsubscribe anytime. Australian data only.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Tenantflow</div>
+        <div class="footer-tagline">The AI-first property management platform built specifically for Queensland property managers. Automate the grind. Focus on growth.</div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="app.html">Live Demo</a>
+        <a href="demo.html">Demo Video</a>
+      </div>
+      <div class="footer-col">
+        <h4>Compliance</h4>
+        <a href="app.html">RTA Act 2008</a>
+        <a href="app.html">Form 18a</a>
+        <a href="app.html">Entry Notices</a>
+        <a href="app.html">NCAT Support</a>
+      </div>
+      <div class="footer-col">
+        <h4>Get Started</h4>
+        <a href="#early-access">Early Access</a>
+        <a href="#early-access">Contact Us</a>
+        <a href="app.html">Live Demo</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&#169; 2026 Tenantflow. Built for Queensland, Australia.</div>
+      <div class="footer-badges">
+        <div class="f-badge">&#127462;&#127482; QLD</div>
+        <div class="f-badge">RTA Compliant</div>
+        <div class="f-badge">AI Powered</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">&#10003;</span>
+  <span id="toast-msg">You're on the early access list!</span>
+</div>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Early access form
+function submitAccess() {
+  const email = document.getElementById('access-email').value.trim();
+  if (!email || !email.includes('@')) { document.getElementById('access-email').focus(); return; }
+
+  // Notify Wayne via FormSubmit.co — free email notification service.
+  // First submission triggers a one-time activation email to waynec@varealtyapp.com.
+  fetch('https://formsubmit.co/ajax/waynec@varealtyapp.com', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      email: email,
+      _subject: '🏠 New Tenantflow Early Access Signup',
+      _captcha: 'false',
+      _template: 'table',
+      source: 'tenantflow-app.github.io',
+      message: 'A Queensland property manager just signed up for early access.'
+    })
+  }).catch(() => {}); // fail silently — UI is unaffected either way
+
+  document.getElementById('toast-msg').textContent = "You're on the early access list — we'll be in touch!";
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  document.getElementById('access-email').value = '';
+  setTimeout(() => toast.classList.remove('show'), 4500);
+}
+document.getElementById('access-email').addEventListener('keypress', (e) => { if (e.key === 'Enter') submitAccess(); });
+
+// Nav shadow on scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.boxShadow = window.scrollY > 20 ? '0 1px 20px rgba(0,0,0,0.1)' : 'none';
+});
+</script>
+</body>
+</html>
