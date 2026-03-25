@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tenantflow — Product Demo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a0f;font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;}
+
+/* ── Video shell ── */
+#player{position:relative;width:960px;max-width:100vw;aspect-ratio:16/9;background:#0d1117;border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.8);}
+#scenes{width:100%;height:100%;position:relative;}
+.scene{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;animation:sceneIn 0.6s ease forwards;}
+.scene.active{display:flex;}
+@keyframes sceneIn{from{opacity:0;transform:scale(0.97)}to{opacity:1;transform:scale(1)}}
+@keyframes sceneOut{from{opacity:1}to{opacity:0}}
+
+/* ── Controls ── */
+#controls{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.85));padding:32px 20px 16px;z-index:100;}
+#progress-bar{width:100%;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;cursor:pointer;margin-bottom:12px;}
+#progress-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);border-radius:2px;transition:width 0.1s linear;}
+#ctrl-row{display:flex;align-items:center;gap:12px;}
+.ctrl-btn{background:none;border:none;color:#fff;cursor:pointer;opacity:0.8;transition:opacity 0.2s;padding:4px;}
+.ctrl-btn:hover{opacity:1;}
+#scene-title{flex:1;color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;letter-spacing:0.3px;}
+#scene-counter{color:rgba(255,255,255,0.5);font-size:12px;}
+#speed-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;}
+
+/* ── Scene nav dots ── */
+#scene-dots{display:flex;gap:6px;margin-top:8px;justify-content:center;}
+.scene-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);cursor:pointer;transition:all 0.2s;}
+.scene-dot.active{background:#3b82f6;width:18px;border-radius:3px;}
+
+/* ── SCENE 1 — Title ── */
+#s1{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);}
+.s1-logo{font-size:48px;font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;opacity:0;animation:fadeUp 0.8s 0.5s forwards;}
+.s1-tag{font-size:18px;color:rgba(255,255,255,0.6);font-weight:400;opacity:0;animation:fadeUp 0.8s 1s forwards;}
+.s1-sub{font-size:13px;color:rgba(255,255,255,0.35);margin-top:6px;opacity:0;animation:fadeUp 0.8s 1.4s forwards;letter-spacing:1px;text-transform:uppercase;}
+.s1-pills{display:flex;gap:10px;margin-top:32px;opacity:0;animation:fadeUp 0.8s 1.8s forwards;}
+.s1-pill{padding:6px 16px;border-radius:20px;font-size:11px;font-weight:600;color:#fff;}
+.s1-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.05) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.s1-glow{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,0.2),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:breathe 4s ease-in-out infinite;}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.5;}50%{transform:translate(-50%,-50%) scale(1.1);opacity:1;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SCENE 2 — AI Inbox / Maintenance Triage ── */
+#s2{background:linear-gradient(180deg,#0d1117,#0f1f2e);}
+.mock-window{background:#1e293b;border-radius:12px;border:1px solid #334155;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.mock-titlebar{background:#0f172a;padding:8px 12px;display:flex;align-items:center;gap:6px;}
+.dot{width:10px;height:10px;border-radius:50%;}
+.mock-content{padding:16px;}
+.email-card{background:#0f172a;border:1px solid #1e3a5f;border-radius:8px;padding:12px;margin-bottom:8px;opacity:0;transform:translateX(-20px);}
+.email-card.show{opacity:1;transform:translateX(0);transition:all 0.5s ease;}
+.email-from{font-size:11px;font-weight:700;color:#60a5fa;}
+.email-subj{font-size:12px;color:#e2e8f0;margin:3px 0;}
+.email-body{font-size:10px;color:#94a3b8;line-height:1.5;}
+.ai-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-size:10px;font-weight:700;}
+.ai-scanning{animation:scanPulse 1s ease-in-out infinite;}
+@keyframes scanPulse{0%,100%{opacity:0.7}50%{opacity:1;box-shadow:0 0 8px currentColor;}}
+.form-gen{background:#0f2d0f;border:1px solid #16a34a;border-radius:8px;padding:10px 12px;margin-top:8px;opacity:0;transform:translateY(10px);}
+.form-gen.show{opacity:1;transform:translateY(0);transition:all 0.5s 0.2s;}
+.status-pill{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;display:inline-block;}
+
+/* ── SCENE 3 — Rent Arrears ── */
+#s3{background:linear-gradient(180deg,#0d1117,#1a0a0a);}
+.arrears-row{display:flex;align-items:center;gap:10px;background:#1e293b;border-radius:8px;padding:10px 12px;margin-bottom:6px;opacity:0;transform:translateX(-15px);}
+.arrears-row.show{opacity:1;transform:translateX(0);transition:all 0.4s ease;}
+.arrears-days{font-size:20px;font-weight:900;min-width:36px;text-align:center;}
+.arrears-info{flex:1;}
+.arrears-name{font-size:12px;font-weight:700;color:#e2e8f0;}
+.arrears-addr{font-size:10px;color:#64748b;}
+.arrears-amt{font-size:13px;font-weight:700;}
+.timeline-flow{display:flex;align-items:center;gap:0;margin-top:16px;opacity:0;}
+.timeline-flow.show{opacity:1;transition:opacity 0.5s 0.5s;}
+.tl-step{text-align:center;flex:1;}
+.tl-box{padding:6px 8px;border-radius:6px;font-size:9px;font-weight:700;}
+.tl-arrow{font-size:18px;color:#334155;animation:arrowPulse 1.5s ease-in-out infinite;}
+@keyframes arrowPulse{0%,100%{color:#334155;transform:translateX(0)}50%{color:#60a5fa;transform:translateX(3px)}}
+.tl-day{font-size:8px;color:#475569;margin-top:3px;}
+.escalate-badge{background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;display:inline-block;animation:escalatePulse 1s ease-in-out infinite;}
+@keyframes escalatePulse{0%,100%{box-shadow:0 0 0 rgba(239,68,68,0)}50%{box-shadow:0 0 12px rgba(239,68,68,0.5)}}
+
+/* ── SCENE 4 — Lease Renewal ── */
+#s4{background:linear-gradient(180deg,#0d1117,#0f1f0f);}
+.lease-card{background:#1e293b;border-radius:10px;padding:12px 14px;margin-bottom:8px;opacity:0;transform:translateY(12px);}
+.lease-card.show{opacity:1;transform:translateY(0);transition:all 0.4s ease;}
+.lease-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.lease-addr{font-size:12px;font-weight:700;color:#e2e8f0;}
+.days-badge{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;}
+.days-badge.red{background:#7f1d1d;color:#fca5a5;}
+.days-badge.orange{background:#7c2d12;color:#fdba74;}
+.days-badge.yellow{background:#713f12;color:#fde68a;}
+.lease-detail{font-size:10px;color:#64748b;display:flex;gap:16px;}
+.lease-detail span strong{color:#94a3b8;}
+.action-row{display:flex;gap:6px;margin-top:8px;}
+.mini-btn{padding:4px 10px;border-radius:6px;font-size:10px;font-weight:600;border:none;cursor:pointer;}
+.renewal-letter{background:#0f172a;border:1px solid #22c55e;border-radius:8px;padding:10px 12px;margin-top:10px;font-size:10px;color:#86efac;opacity:0;}
+.renewal-letter.show{opacity:1;transition:opacity 0.5s 0.3s;}
+.typing-text::after{content:'|';animation:blink 0.7s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── SCENE 5 — Inspection Workflow ── */
+#s5{background:linear-gradient(180deg,#0d1117,#0a0f1e);}
+.insp-flow{display:flex;flex-direction:column;gap:0;width:100%;}
+.insp-step{display:flex;align-items:flex-start;gap:12px;padding:10px 0;opacity:0;transform:translateX(-15px);}
+.insp-step.show{opacity:1;transform:translateX(0);transition:all 0.4s ease;}
+.insp-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.insp-line{width:2px;height:20px;margin-left:17px;background:#1e3a5f;margin-top:-2px;}
+.insp-content{flex:1;}
+.insp-title{font-size:12px;font-weight:700;color:#e2e8f0;}
+.insp-desc{font-size:10px;color:#64748b;margin-top:2px;}
+.insp-check{color:#22c55e;font-size:14px;margin-left:auto;}
+.pdf-preview{background:#1e293b;border-radius:8px;border:1px solid #334155;padding:8px 10px;margin-top:4px;font-size:9px;color:#94a3b8;}
+.pdf-preview-header{color:#e2e8f0;font-weight:700;font-size:10px;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.pdf-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #0f172a;}
+
+/* ── SCENE 6 — Owner Statements ── */
+#s6{background:linear-gradient(180deg,#0d1117,#0f0f1e);}
+.statement-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;}
+.stmt-card{background:#1e293b;border-radius:8px;padding:10px;text-align:center;opacity:0;transform:scale(0.8);}
+.stmt-card.show{opacity:1;transform:scale(1);transition:all 0.3s ease;}
+.stmt-owner{font-size:10px;font-weight:700;color:#e2e8f0;}
+.stmt-props{font-size:9px;color:#64748b;}
+.stmt-income{font-size:14px;font-weight:900;color:#22c55e;margin:4px 0;}
+.stmt-pdf{font-size:9px;color:#60a5fa;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:4px;}
+.stmt-status{display:inline-block;padding:2px 8px;border-radius:8px;font-size:9px;font-weight:700;}
+.gen-all-btn{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;padding:8px 20px;border-radius:8px;font-size:12px;font-weight:700;border:none;cursor:pointer;margin-bottom:16px;opacity:0;animation:none;}
+.gen-all-btn.show{opacity:1;transition:opacity 0.4s;}
+.progress-ring{width:40px;height:40px;position:relative;margin:0 auto 4px;}
+.ring-circle{fill:none;stroke:#334155;stroke-width:3;}
+.ring-progress{fill:none;stroke:#22c55e;stroke-width:3;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 1s ease;transform:rotate(-90deg);transform-origin:20px 20px;}
+
+/* ── SCENE 7 — Compliance / Bond ── */
+#s7{background:linear-gradient(180deg,#0d1117,#0a100f);}
+.comp-panel{background:#1e293b;border-radius:10px;padding:14px;margin-bottom:10px;opacity:0;transform:translateY(10px);}
+.comp-panel.show{opacity:1;transform:translateY(0);transition:all 0.4s ease;}
+.comp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.comp-title{font-size:13px;font-weight:700;color:#e2e8f0;}
+.comp-all-good{background:#0f2d0f;border:1px solid #16a34a;color:#4ade80;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;}
+.bond-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #0f172a;font-size:10px;}
+.bond-row:last-child{border-bottom:none;}
+.bond-prop{color:#94a3b8;}
+.bond-ref{color:#64748b;font-family:monospace;}
+.bond-amt{color:#e2e8f0;font-weight:700;}
+.bond-status{padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;}
+.qcat-row{background:#1a1230;border:1px solid #312e81;border-radius:6px;padding:8px 10px;margin-bottom:6px;font-size:10px;}
+.qcat-type{color:#a78bfa;font-weight:700;}
+.qcat-status-active{color:#fb923c;font-weight:700;}
+.stat-row{display:flex;gap:8px;margin-bottom:10px;opacity:0;}
+.stat-row.show{opacity:1;transition:opacity 0.5s 0.5s;}
+.stat-card{flex:1;background:#0f172a;border-radius:8px;padding:10px;text-align:center;border:1px solid #1e293b;}
+.stat-num{font-size:22px;font-weight:900;}
+.stat-label{font-size:9px;color:#475569;margin-top:2px;}
+
+/* ── SCENE 8 — CTA ── */
+#s8{background:linear-gradient(135deg,#0f172a,#1e1b4b);}
+.s8-before{background:#1e1f2e;border-radius:12px;padding:16px;flex:1;margin:0 8px;}
+.s8-after{background:#0f2d0f;border-radius:12px;padding:16px;flex:1;margin:0 8px;border:1px solid #16a34a;}
+.s8-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.s8-item{display:flex;align-items:center;gap:8px;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.s8-time{font-size:11px;font-weight:700;min-width:50px;}
+.s8-row{display:flex;width:100%;gap:0;margin-top:16px;}
+.s8-vs{width:40px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#475569;}
+.s8-headline{font-size:32px;font-weight:900;text-align:center;margin-bottom:8px;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;opacity:0;animation:fadeUp 0.8s 0.3s forwards;}
+.s8-sub{text-align:center;color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:24px;opacity:0;animation:fadeUp 0.8s 0.6s forwards;}
+.s8-cta{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;padding:12px 32px;border-radius:10px;font-size:14px;font-weight:700;border:none;cursor:pointer;opacity:0;animation:fadeUp 0.8s 0.9s forwards;box-shadow:0 8px 32px rgba(99,102,241,0.4);}
+.s8-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(99,102,241,0.6);}
+.s8-foot{color:rgba(255,255,255,0.25);font-size:10px;text-align:center;margin-top:16px;opacity:0;animation:fadeUp 0.8s 1.2s forwards;}
+
+/* ── Scene header labels ── */
+.scene-label{position:absolute;top:16px;left:0;right:0;text-align:center;font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:2px;text-transform:uppercase;}
+.narration{position:absolute;bottom:72px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);padding:8px 20px;border-radius:20px;font-size:12px;color:rgba(255,255,255,0.8);text-align:center;max-width:80%;min-height:32px;display:flex;align-items:center;justify-content:center;z-index:50;}
+
+/* ── Feature badge ── */
+.feat-badge{position:absolute;top:16px;right:16px;background:linear-gradient(135deg,rgba(99,102,241,0.3),rgba(139,92,246,0.3));border:1px solid rgba(139,92,246,0.4);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#a78bfa;}
+
+/* ── Shared ── */
+.flex-row{display:flex;gap:0;width:100%;}
+.col{flex:1;padding:0 10px;}
+.glow-green{box-shadow:0 0 12px rgba(34,197,94,0.3);}
+.glow-blue{box-shadow:0 0 12px rgba(59,130,246,0.3);}
+.text-green{color:#22c55e;}
+.text-red{color:#ef4444;}
+.text-orange{color:#fb923c;}
+.text-blue{color:#60a5fa;}
+.text-purple{color:#a78bfa;}
+.text-yellow{color:#fbbf24;}
+.text-dim{color:#64748b;}
+.fw7{font-weight:700;}
+.fs10{font-size:10px;}
+.fs11{font-size:11px;}
+.fs12{font-size:12px;}
+.fs14{font-size:14px;}
+.fw9{font-weight:900;}
+.mt8{margin-top:8px;}
+.mb8{margin-bottom:8px;}
+.w100{width:100%;}
+
+/* ── Outside player ── */
+#player-wrap{position:relative;}
+#video-label{color:rgba(255,255,255,0.2);font-size:11px;text-align:center;margin-top:12px;letter-spacing:1px;}
+#thumb-row{display:flex;gap:8px;margin-top:14px;justify-content:center;}
+.thumb{width:80px;height:45px;border-radius:6px;cursor:pointer;border:2px solid transparent;opacity:0.5;transition:all 0.2s;overflow:hidden;background:#1e293b;display:flex;align-items:center;justify-content:center;font-size:16px;flex-direction:column;}
+.thumb:hover{opacity:0.8;}
+.thumb.active{border-color:#3b82f6;opacity:1;}
+.thumb-label{font-size:8px;color:rgba(255,255,255,0.5);margin-top:2px;text-align:center;line-height:1.2;}
+</style>
+</head>
+<body>
+
+<div id="player-wrap">
+<div id="player">
+  <div id="scenes">
+
+    <!-- ══════════════════ SCENE 1 — TITLE ══════════════════ -->
+    <div class="scene" id="s1">
+      <div class="s1-grid"></div>
+      <div class="s1-glow"></div>
+      <div style="position:relative;z-index:1;text-align:center;">
+        <div class="s1-logo">Tenantflow</div>
+        <div class="s1-tag">Property Management, Automated.</div>
+        <div class="s1-sub">Built for Queensland Property Managers · RTRA Act 2008 Compliant</div>
+        <div class="s1-pills">
+          <span class="s1-pill" style="background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);">🤖 AI-Powered</span>
+          <span class="s1-pill" style="background:rgba(34,197,94,0.2);border:1px solid rgba(34,197,94,0.4);">⚖️ QLD Compliant</span>
+          <span class="s1-pill" style="background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.4);">📋 Auto Forms</span>
+          <span class="s1-pill" style="background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.4);">⏱ Save 2hrs/day</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ SCENE 2 — AI INBOX / MAINTENANCE ══════════════════ -->
+    <div class="scene" id="s2" style="padding:0 40px;">
+      <div class="feat-badge">AI Inbox + Maintenance Triage</div>
+      <div class="scene-label">Feature 1 of 6</div>
+      <div style="width:100%;display:flex;gap:16px;">
+        <!-- Left: Email -->
+        <div style="flex:1.2;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:1px;">INCOMING TENANT MESSAGES</div>
+          <div class="email-card" id="s2-e1">
+            <div class="email-from">📧 Sarah Mitchell — 14 Palm Ave, Burleigh</div>
+            <div class="email-subj">Hot water not working — urgent!</div>
+            <div class="email-body">Hi, our hot water system has completely failed. We have 3 kids. Can someone come ASAP? Been cold showering for 2 days.</div>
+            <div style="margin-top:6px;display:flex;gap:6px;align-items:center;">
+              <span class="ai-badge" id="s2-ai1" style="background:#1e3a5f;color:#60a5fa;">🤖 Analysing...</span>
+            </div>
+          </div>
+          <div class="email-card" id="s2-e2">
+            <div class="email-from">📧 James O'Brien — 7 Coral St, Palm Beach</div>
+            <div class="email-subj">General maintenance request</div>
+            <div class="email-body">The kitchen tap is dripping. It's not urgent but could someone take a look when available? Thanks.</div>
+            <div style="margin-top:6px;">
+              <span class="ai-badge" style="background:#0f2d0f;color:#4ade80;">🤖 Routine — Scheduled</span>
+            </div>
+          </div>
+          <div class="email-card" id="s2-e3">
+            <div class="email-from">📧 Maria Santos — 3 Hibiscus Ct, Robina</div>
+            <div class="email-subj">Rent receipt query</div>
+            <div class="email-body">Could I please get a receipt for last month's rent for my tax records?</div>
+            <div style="margin-top:6px;">
+              <span class="ai-badge" style="background:#1a0a2e;color:#c084fc;">🤖 Admin — Auto Reply</span>
+            </div>
+          </div>
+        </div>
+        <!-- Right: AI action panel -->
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:1px;">AI RECOMMENDATION</div>
+          <div id="s2-panel" style="background:#0f172a;border:1px solid #1e3a5f;border-radius:10px;padding:14px;opacity:0;transition:opacity 0.5s;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:20px;">🚨</span>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#ef4444;">URGENT REPAIR</div>
+                <div style="font-size:10px;color:#64748b;">Hot water — essential service failure</div>
+              </div>
+              <div style="margin-left:auto;background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700;">s.214 RTRA</div>
+            </div>
+            <div style="font-size:10px;color:#94a3b8;margin-bottom:10px;line-height:1.6;">AI confidence: <strong style="color:#22c55e;">97%</strong> · Essential service failure (RTRA s.214). Lessor must attend to <strong style="color:#ef4444;">immediately</strong>.</div>
+            <div class="form-gen" id="s2-form">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                <span>📋</span><span style="font-size:11px;font-weight:700;color:#4ade80;">Form 9 — Entry Notice</span>
+                <span style="margin-left:auto;font-size:9px;color:#16a34a;">Auto-generated ✓</span>
+              </div>
+              <div style="font-size:9px;color:#64748b;line-height:1.7;">
+                Property: 14 Palm Ave, Burleigh Heights<br>
+                Reason: Urgent repair — hot water system failure<br>
+                Entry: Tomorrow 8:00am – 5:00pm<br>
+                Contractor: QLD Plumbing Co. · 0400 123 456
+              </div>
+            </div>
+            <div id="s2-actions" style="display:flex;gap:6px;margin-top:10px;opacity:0;transition:opacity 0.5s;">
+              <div style="flex:1;background:#1d4ed8;color:#fff;padding:7px;border-radius:6px;font-size:10px;font-weight:700;text-align:center;">📧 Send Form 9 to Tenant</div>
+              <div style="flex:1;background:#334155;color:#94a3b8;padding:7px;border-radius:6px;font-size:10px;font-weight:700;text-align:center;">📞 Call Contractor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="narration" id="s2-narr">A tenant reports a hot water failure. Tenantflow's AI reads the message, classifies it as an urgent repair under s.214 of the RTRA Act, and generates a Form 9 entry notice — all in seconds.</div>
+    </div>
+
+    <!-- ══════════════════ SCENE 3 — RENT ARREARS ══════════════════ -->
+    <div class="scene" id="s3" style="padding:0 40px;">
+      <div class="feat-badge">Rent Arrears Escalation</div>
+      <div class="scene-label">Feature 2 of 6</div>
+      <div style="width:100%;display:flex;gap:16px;">
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:1px;">CURRENT ARREARS — 3 TENANTS</div>
+          <div class="arrears-row" id="s3-r1">
+            <div class="arrears-days text-red">14</div>
+            <div class="arrears-info">
+              <div class="arrears-name">David Chen — 5 Ocean Dr, Broadbeach</div>
+              <div class="arrears-addr">Weekly rent: $650 · 2 weeks overdue</div>
+            </div>
+            <div class="arrears-amt text-red">$1,300 owing</div>
+            <div class="escalate-badge">Form 11 Due</div>
+          </div>
+          <div class="arrears-row" id="s3-r2">
+            <div class="arrears-days text-orange">7</div>
+            <div class="arrears-info">
+              <div class="arrears-name">Emily Watson — 12 Surf Pde, Currumbin</div>
+              <div class="arrears-addr">Weekly rent: $520 · 1 week overdue</div>
+            </div>
+            <div class="arrears-amt text-orange">$520 owing</div>
+            <span class="status-pill" style="background:#431407;color:#fdba74;">Reminder Sent</span>
+          </div>
+          <div class="arrears-row" id="s3-r3">
+            <div class="arrears-days text-yellow">3</div>
+            <div class="arrears-info">
+              <div class="arrears-name">Tom Murphy — 88 Lakeview Blvd, Hope Island</div>
+              <div class="arrears-addr">Weekly rent: $780 · 3 days overdue</div>
+            </div>
+            <div class="arrears-amt text-yellow">$334 owing</div>
+            <span class="status-pill" style="background:#1c1917;color:#a8a29e;">New</span>
+          </div>
+          <!-- Escalation timeline -->
+          <div class="timeline-flow" id="s3-tl">
+            <div class="tl-step"><div class="tl-box" style="background:#1c1917;border:1px solid #44403c;color:#a8a29e;">💬 Reminder</div><div class="tl-day">Day 1–7</div></div>
+            <div class="tl-arrow">→</div>
+            <div class="tl-step"><div class="tl-box" style="background:#431407;border:1px solid #fb923c;color:#fdba74;">📋 Form 11</div><div class="tl-day">Day 8</div></div>
+            <div class="tl-arrow">→</div>
+            <div class="tl-step"><div class="tl-box" style="background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5;">📋 Form 12</div><div class="tl-day">Day 15</div></div>
+            <div class="tl-arrow">→</div>
+            <div class="tl-step"><div class="tl-box" style="background:#1e1b4b;border:1px solid #6366f1;color:#a5b4fc;">⚖️ QCAT</div><div class="tl-day">Day 22+</div></div>
+          </div>
+        </div>
+        <div style="flex:0.9;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:1px;">AUTO-GENERATED: FORM 11</div>
+          <div id="s3-form" style="background:#0f172a;border:1px solid #ef4444;border-radius:10px;padding:14px;opacity:0;transition:opacity 0.5s;">
+            <div style="font-size:11px;font-weight:700;color:#fca5a5;margin-bottom:8px;">📋 Notice to Remedy Breach</div>
+            <div style="font-size:9px;color:#94a3b8;line-height:1.8;">
+              <div style="display:flex;justify-content:space-between;"><span>Tenant:</span><strong style="color:#e2e8f0;">David Chen</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>Property:</span><strong style="color:#e2e8f0;">5 Ocean Dr, Broadbeach</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>Breach:</span><strong style="color:#ef4444;">Rent arrears $1,300</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>Remedy by:</span><strong style="color:#fbbf24;">7 days from today</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>Authority:</span><strong style="color:#a5b4fc;">RTRA Act s.282</strong></div>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:6px;">
+              <div style="flex:1;background:#1d4ed8;color:#fff;padding:6px;border-radius:6px;font-size:9px;font-weight:700;text-align:center;">📧 Email + SMS Tenant</div>
+              <div style="flex:1;background:#334155;color:#94a3b8;padding:6px;border-radius:6px;font-size:9px;font-weight:700;text-align:center;">📥 Download PDF</div>
+            </div>
+          </div>
+          <div id="s3-stats" style="display:flex;gap:8px;margin-top:8px;opacity:0;transition:opacity 0.5s;">
+            <div style="flex:1;background:#1e293b;border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:18px;font-weight:900;color:#ef4444;">$2,154</div>
+              <div style="font-size:9px;color:#475569;margin-top:2px;">Total Arrears</div>
+            </div>
+            <div style="flex:1;background:#1e293b;border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:18px;font-weight:900;color:#fb923c;">3</div>
+              <div style="font-size:9px;color:#475569;margin-top:2px;">Active Cases</div>
+            </div>
+            <div style="flex:1;background:#1e293b;border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:18px;font-weight:900;color:#22c55e;">1</div>
+              <div style="font-size:9px;color:#475569;margin-top:2px;">Forms Auto-Sent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="narration">Tenantflow monitors rent payments daily. When arrears hit the legal threshold, it auto-generates the correct Form — from a reminder email all the way to a QCAT application.</div>
+    </div>
+
+    <!-- ══════════════════ SCENE 4 — LEASE RENEWALS ══════════════════ -->
+    <div class="scene" id="s4" style="padding:0 40px;">
+      <div class="feat-badge">Lease Renewal Pipeline</div>
+      <div class="scene-label">Feature 3 of 6</div>
+      <div style="width:100%;display:flex;gap:16px;">
+        <div style="flex:1.1;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:1px;">EXPIRING LEASES — NEXT 90 DAYS</div>
+          <div class="lease-card" id="s4-l1">
+            <div class="lease-header">
+              <div class="lease-addr">🏠 14 Palm Ave, Burleigh Heights</div>
+              <span class="days-badge red">22 days left</span>
+            </div>
+            <div class="lease-detail"><span>Tenant: <strong>Sarah Mitchell</strong></span><span>Rent: <strong>$620/wk</strong></span><span>Market: <strong style="color:#22c55e;">$680/wk</strong></span></div>
+            <div class="action-row">
+              <div class="mini-btn" style="background:#1d4ed8;color:#fff;">📧 Send Renewal + $60 increase</div>
+              <span class="status-pill" style="background:#1c1917;color:#a8a29e;margin-left:auto;">Pending</span>
+            </div>
+          </div>
+          <div class="lease-card" id="s4-l2">
+            <div class="lease-header">
+              <div class="lease-addr">🏠 7 Coral St, Palm Beach</div>
+              <span class="days-badge orange">45 days left</span>
+            </div>
+            <div class="lease-detail"><span>Tenant: <strong>James O'Brien</strong></span><span>Rent: <strong>$480/wk</strong></span><span>Market: <strong style="color:#22c55e;">$510/wk</strong></span></div>
+            <div class="action-row">
+              <div class="mini-btn" style="background:#1d4ed8;color:#fff;">📧 Send Renewal + $30 increase</div>
+              <span class="status-pill" style="background:#0f2d0f;color:#4ade80;margin-left:auto;">✓ Accepted</span>
+            </div>
+          </div>
+          <div class="lease-card" id="s4-l3">
+            <div class="lease-header">
+              <div class="lease-addr">🏠 88 Lakeview Blvd, Hope Island</div>
+              <span class="days-badge yellow">67 days left</span>
+            </div>
+            <div class="lease-detail"><span>Tenant: <strong>Tom Murphy</strong></span><span>Rent: <strong>$780/wk</strong></span><span>Market: <strong style="color:#fbbf24;">$780/wk (at market)</strong></span></div>
+            <div class="action-row">
+              <div class="mini-btn" style="background:#334155;color:#94a3b8;">📧 Send Renewal Letter</div>
+              <span class="status-pill" style="background:#1c1917;color:#a8a29e;margin-left:auto;">Not Started</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:0.9;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:1px;">AI RENEWAL LETTER DRAFT</div>
+          <div id="s4-letter" style="background:#0f172a;border:1px solid #16a34a;border-radius:10px;padding:14px;opacity:0;transition:opacity 0.5s;">
+            <div style="font-size:10px;font-weight:700;color:#4ade80;margin-bottom:6px;">📄 Renewal Letter — 14 Palm Ave</div>
+            <div style="font-size:9px;color:#94a3b8;line-height:1.8;">
+              Dear Sarah,<br><br>
+              Your lease at <strong style="color:#e2e8f0;">14 Palm Ave, Burleigh Heights</strong> expires on <strong style="color:#fbbf24;">15 April 2026</strong>.<br><br>
+              We'd love to have you stay! New terms:<br>
+              • New rent: <strong style="color:#22c55e;">$680/wk</strong> (market rate)<br>
+              • Term: 12 months fixed<br>
+              • From: 16 April 2026<br><br>
+              Please reply by <strong style="color:#ef4444;">1 April 2026</strong>.<br><br>
+              <em style="color:#475569;">Ref: RTRA Act s.93 — 2 months notice given ✓</em>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:6px;">
+              <div style="flex:1;background:#1d4ed8;color:#fff;padding:6px;border-radius:6px;font-size:9px;font-weight:700;text-align:center;">📧 Send via Gmail</div>
+              <div style="flex:1;background:#334155;color:#94a3b8;padding:6px;border-radius:6px;font-size:9px;font-weight:700;text-align:center;">✏️ Edit Draft</div>
+            </div>
+          </div>
+          <div id="s4-kpi" style="display:flex;gap:8px;margin-top:8px;opacity:0;transition:opacity 0.5s;">
+            <div style="flex:1;background:#1e293b;border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:18px;font-weight:900;color:#fbbf24;">3</div>
+              <div style="font-size:9px;color:#475569;margin-top:2px;">Expiring 90 days</div>
+            </div>
+            <div style="flex:1;background:#1e293b;border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:18px;font-weight:900;color:#22c55e;">+$90</div>
+              <div style="font-size:9px;color:#475569;margin-top:2px;">Rent uplift /wk</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="narration">Tenantflow alerts you 90 days before every lease expires. It compares current rent to market rate and drafts a personalised renewal letter with the recommended increase — ready to send in one click.</div>
+    </div>
+
+    <!-- ══════════════════ SCENE 5 — INSPECTIONS ══════════════════ -->
+    <div class="scene" id="s5" style="padding:0 40px;">
+      <div class="feat-badge">Routine Inspections</div>
+      <div class="scene-label">Feature 4 of 6</div>
+      <div style="width:100%;display:flex;gap:20px;align-items:flex-start;">
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:10px;letter-spacing:1px;">INSPECTION WORKFLOW</div>
+          <div class="insp-flow">
+            <div class="insp-step" id="s5-a">
+              <div class="insp-icon" style="background:#1e3a5f;">📅</div>
+              <div class="insp-content">
+                <div class="insp-title">1. Schedule Inspection</div>
+                <div class="insp-desc">Select property · Set date · Choose type (Routine / Entry / Exit)</div>
+              </div>
+              <div class="insp-check">✓</div>
+            </div>
+            <div class="insp-line"></div>
+            <div class="insp-step" id="s5-b">
+              <div class="insp-icon" style="background:#1a1230;">📋</div>
+              <div class="insp-content">
+                <div class="insp-title">2. Form 9 Auto-Generated</div>
+                <div class="insp-desc">Minimum 7 days notice · Pre-filled with property & date · Sent to tenant</div>
+              </div>
+              <div class="insp-check">✓</div>
+            </div>
+            <div class="insp-line"></div>
+            <div class="insp-step" id="s5-c">
+              <div class="insp-icon" style="background:#0f2d0f;">🔍</div>
+              <div class="insp-content">
+                <div class="insp-title">3. Record Findings</div>
+                <div class="insp-desc">Room-by-room notes · Condition ratings · Photo references logged</div>
+              </div>
+              <div class="insp-check">✓</div>
+            </div>
+            <div class="insp-line"></div>
+            <div class="insp-step" id="s5-d">
+              <div class="insp-icon" style="background:#1e1b4b;">📄</div>
+              <div class="insp-content">
+                <div class="insp-title">4. PDF Report Generated</div>
+                <div class="insp-desc">Branded report with photos · Emailed to owner · Stored in vault</div>
+              </div>
+              <div class="insp-check">✓</div>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1.1;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:1px;">INSPECTION REPORT PREVIEW</div>
+          <div id="s5-pdf" class="pdf-preview" style="opacity:0;transition:opacity 0.5s 0.5s;">
+            <div class="pdf-preview-header">📄 VA Realty — Routine Inspection Report <span style="margin-left:auto;color:#4ade80;font-size:9px;">✓ PDF Ready</span></div>
+            <div class="pdf-row"><span>Property</span><span style="color:#e2e8f0;font-weight:700;">3 Hibiscus Ct, Robina</span></div>
+            <div class="pdf-row"><span>Conducted</span><span style="color:#e2e8f0;">25 March 2026 · 10:30am</span></div>
+            <div class="pdf-row"><span>Inspector</span><span style="color:#e2e8f0;">Wayne Carston PM</span></div>
+            <div style="margin-top:6px;font-size:9px;font-weight:700;color:#60a5fa;margin-bottom:4px;">ROOM CONDITIONS</div>
+            <div class="pdf-row"><span>Kitchen</span><span style="color:#22c55e;">Good ✓</span></div>
+            <div class="pdf-row"><span>Bathrooms</span><span style="color:#22c55e;">Good ✓</span></div>
+            <div class="pdf-row"><span>Bedrooms</span><span style="color:#22c55e;">Good ✓</span></div>
+            <div class="pdf-row"><span>Living Areas</span><span style="color:#fbbf24;">Fair — minor mark on wall</span></div>
+            <div class="pdf-row"><span>Garage</span><span style="color:#22c55e;">Good ✓</span></div>
+            <div class="pdf-row"><span>Gardens</span><span style="color:#fb923c;">Needs attention ⚠</span></div>
+            <div style="margin-top:6px;background:#431407;border-radius:4px;padding:4px 6px;">
+              <span style="font-size:9px;color:#fdba74;">⚠ Maintenance raised: Overgrown rear garden — job logged automatically</span>
+            </div>
+          </div>
+          <div id="s5-btn" style="margin-top:8px;display:flex;gap:6px;opacity:0;transition:opacity 0.5s 1s;">
+            <div style="flex:1;background:#1d4ed8;color:#fff;padding:7px;border-radius:6px;font-size:10px;font-weight:700;text-align:center;">📧 Email Report to Owner</div>
+            <div style="flex:1;background:#334155;color:#94a3b8;padding:7px;border-radius:6px;font-size:10px;font-weight:700;text-align:center;">🔧 Raise Maintenance Job</div>
+          </div>
+        </div>
+      </div>
+      <div class="narration">From scheduling to report delivery, inspections take 10 minutes in Tenantflow. Form 9 notices are sent automatically, and any issues found are instantly converted into maintenance jobs.</div>
+    </div>
+
+    <!-- ══════════════════ SCENE 6 — OWNER STATEMENTS ══════════════════ -->
+    <div class="scene" id="s6" style="padding:0 40px;flex-direction:column;align-items:flex-start;">
+      <div class="feat-badge">Owner Statements</div>
+      <div class="scene-label">Feature 5 of 6</div>
+      <div style="width:100%;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:#64748b;letter-spacing:1px;">OWNER STATEMENTS — MARCH 2026</div>
+          <div class="gen-all-btn show" id="s6-genbtn">⚡ Generate All Statements</div>
+        </div>
+        <div class="statement-grid" id="s6-grid">
+          <div class="stmt-card" id="s6-c1">
+            <div class="progress-ring"><svg viewBox="0 0 40 40"><circle class="ring-circle" cx="20" cy="20" r="15"/><circle class="ring-progress" id="r1" cx="20" cy="20" r="15"/></svg></div>
+            <div class="stmt-owner">Henderson Family Trust</div>
+            <div class="stmt-props">4 properties</div>
+            <div class="stmt-income">$12,840</div>
+            <div class="stmt-pdf">📄 Statement Ready</div>
+            <div><span class="stmt-status" style="background:#0f2d0f;color:#4ade80;">✓ PDF Generated</span></div>
+          </div>
+          <div class="stmt-card" id="s6-c2">
+            <div class="progress-ring"><svg viewBox="0 0 40 40"><circle class="ring-circle" cx="20" cy="20" r="15"/><circle class="ring-progress" id="r2" cx="20" cy="20" r="15"/></svg></div>
+            <div class="stmt-owner">Patel Investments Pty Ltd</div>
+            <div class="stmt-props">6 properties</div>
+            <div class="stmt-income">$18,200</div>
+            <div class="stmt-pdf">📄 Statement Ready</div>
+            <div><span class="stmt-status" style="background:#0f2d0f;color:#4ade80;">✓ PDF Generated</span></div>
+          </div>
+          <div class="stmt-card" id="s6-c3">
+            <div class="progress-ring"><svg viewBox="0 0 40 40"><circle class="ring-circle" cx="20" cy="20" r="15"/><circle class="ring-progress" id="r3" cx="20" cy="20" r="15"/></svg></div>
+            <div class="stmt-owner">Kim & Sarah Williams</div>
+            <div class="stmt-props">2 properties</div>
+            <div class="stmt-income">$6,460</div>
+            <div class="stmt-pdf">📄 Statement Ready</div>
+            <div><span class="stmt-status" style="background:#0f2d0f;color:#4ade80;">✓ PDF Generated</span></div>
+          </div>
+          <div class="stmt-card" id="s6-c4">
+            <div class="progress-ring"><svg viewBox="0 0 40 40"><circle class="ring-circle" cx="20" cy="20" r="15"/><circle class="ring-progress" id="r4" cx="20" cy="20" r="15"/></svg></div>
+            <div class="stmt-owner">Nguyen Super Fund</div>
+            <div class="stmt-props">3 properties</div>
+            <div class="stmt-income">$9,100</div>
+            <div class="stmt-pdf">📄 Statement Ready</div>
+            <div><span class="stmt-status" style="background:#0f2d0f;color:#4ade80;">✓ PDF Generated</span></div>
+          </div>
+          <div class="stmt-card" id="s6-c5">
+            <div class="progress-ring"><svg viewBox="0 0 40 40"><circle class="ring-circle" cx="20" cy="20" r="15"/><circle class="ring-progress" id="r5" cx="20" cy="20" r="15"/></svg></div>
+            <div class="stmt-owner">Coastal Properties Pty Ltd</div>
+            <div class="stmt-props">8 properties</div>
+            <div class="stmt-income">$24,960</div>
+            <div class="stmt-pdf">📄 Statement Ready</div>
+            <div><span class="stmt-status" style="background:#0f2d0f;color:#4ade80;">✓ PDF Generated</span></div>
+          </div>
+          <div class="stmt-card" id="s6-c6">
+            <div class="progress-ring"><svg viewBox="0 0 40 40"><circle class="ring-circle" cx="20" cy="20" r="15"/><circle class="ring-progress" id="r6" cx="20" cy="20" r="15"/></svg></div>
+            <div class="stmt-owner">Morrison & Associates</div>
+            <div class="stmt-props">5 properties</div>
+            <div class="stmt-income">$15,600</div>
+            <div class="stmt-pdf">📄 Statement Ready</div>
+            <div><span class="stmt-status" style="background:#0f2d0f;color:#4ade80;">✓ PDF Generated</span></div>
+          </div>
+        </div>
+        <div id="s6-total" style="display:flex;gap:10px;margin-top:10px;opacity:0;transition:opacity 0.5s;">
+          <div style="background:#0f172a;border:1px solid #22c55e;border-radius:8px;padding:8px 14px;font-size:11px;">Total portfolio income: <strong style="color:#22c55e;font-size:15px;"> $87,160</strong> / month</div>
+          <div style="background:#0f172a;border:1px solid #3b82f6;border-radius:8px;padding:8px 14px;font-size:11px;">28 statements ready in <strong style="color:#60a5fa;"> 8 seconds</strong></div>
+          <div style="flex:1;background:#1d4ed8;color:#fff;border-radius:8px;padding:8px 14px;font-size:10px;font-weight:700;text-align:center;cursor:pointer;">📧 Email All Owners</div>
+        </div>
+      </div>
+      <div class="narration">Month-end statements used to take half a day. With Tenantflow, click once — 28 branded PDF statements are generated and emailed to every owner in under 10 seconds.</div>
+    </div>
+
+    <!-- ══════════════════ SCENE 7 — COMPLIANCE ══════════════════ -->
+    <div class="scene" id="s7" style="padding:0 40px;">
+      <div class="feat-badge">Compliance &amp; Bond Register</div>
+      <div class="scene-label">Feature 6 of 6</div>
+      <div style="width:100%;display:flex;gap:16px;">
+        <div style="flex:1.1;">
+          <div class="stat-row" id="s7-stats">
+            <div class="stat-card"><div class="stat-num text-green">18</div><div class="stat-label">Bonds Lodged ✓</div></div>
+            <div class="stat-card"><div class="stat-num text-red">1</div><div class="stat-label">QCAT Active</div></div>
+            <div class="stat-card"><div class="stat-num text-yellow">2</div><div class="stat-label">Awaiting Refund</div></div>
+          </div>
+          <div class="comp-panel" id="s7-b">
+            <div class="comp-header">
+              <div class="comp-title">🔒 Bond Register</div>
+              <div class="comp-all-good">All Lodged with RTA ✓</div>
+            </div>
+            <div class="bond-row"><span class="bond-prop">14 Palm Ave, Burleigh</span><span class="bond-ref">RTA-2024-8871</span><span class="bond-amt">$2,480</span><span class="bond-status" style="background:#0f2d0f;color:#4ade80;">Lodged</span></div>
+            <div class="bond-row"><span class="bond-prop">7 Coral St, Palm Beach</span><span class="bond-ref">RTA-2024-9102</span><span class="bond-amt">$1,920</span><span class="bond-status" style="background:#0f2d0f;color:#4ade80;">Lodged</span></div>
+            <div class="bond-row"><span class="bond-prop">5 Ocean Dr, Broadbeach</span><span class="bond-ref">RTA-2025-1034</span><span class="bond-amt">$2,600</span><span class="bond-status" style="background:#431407;color:#fdba74;">Refund Due</span></div>
+            <div class="bond-row"><span class="bond-prop">88 Lakeview, Hope Island</span><span class="bond-ref">RTA-2023-5567</span><span class="bond-amt">$3,120</span><span class="bond-status" style="background:#0f2d0f;color:#4ade80;">Lodged</span></div>
+          </div>
+        </div>
+        <div style="flex:0.9;">
+          <div class="comp-panel" id="s7-q">
+            <div class="comp-header"><div class="comp-title">⚖️ QCAT Matters</div></div>
+            <div class="qcat-row">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span class="qcat-type">Rent Arrears — Termination</span>
+                <span class="qcat-status-active">Hearing 3 Apr</span>
+              </div>
+              <div style="font-size:9px;color:#64748b;">5 Ocean Dr, Broadbeach · David Chen · File: QLD-2026-00449</div>
+              <div style="margin-top:6px;display:flex;gap:4px;">
+                <span style="background:#1e1b4b;color:#a5b4fc;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;">Evidence filed ✓</span>
+                <span style="background:#431407;color:#fdba74;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:700;">Hearing in 9 days</span>
+              </div>
+            </div>
+          </div>
+          <div id="s7-calert" style="background:#0f172a;border:1px solid #fbbf24;border-radius:10px;padding:12px;opacity:0;transition:opacity 0.5s 0.5s;">
+            <div style="font-size:11px;font-weight:700;color:#fbbf24;margin-bottom:8px;">📅 Upcoming Deadlines</div>
+            <div style="font-size:9px;color:#94a3b8;line-height:1.9;">
+              <div style="display:flex;justify-content:space-between;"><span>28 Mar</span><strong style="color:#ef4444;">Bond refund — 5 Ocean Dr</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>03 Apr</span><strong style="color:#fb923c;">QCAT hearing — David Chen</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>15 Apr</span><strong style="color:#fbbf24;">Lease end — 14 Palm Ave</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>22 Apr</span><strong style="color:#94a3b8;">Routine inspection — Robina</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="narration">Never miss a bond lodgement deadline or QCAT hearing date again. Tenantflow tracks every statutory obligation and surfaces upcoming deadlines so nothing falls through the cracks.</div>
+    </div>
+
+    <!-- ══════════════════ SCENE 8 — CTA ══════════════════ -->
+    <div class="scene" id="s8">
+      <div class="s1-grid"></div>
+      <div style="position:relative;z-index:1;width:100%;padding:0 30px;">
+        <div class="s8-headline">Cut Admin From 3 Hours to 20 Minutes.</div>
+        <div class="s8-sub">Every day. Every week. Every month.</div>
+        <div class="s8-row">
+          <div class="s8-before" style="opacity:0;animation:fadeUp 0.6s 1s forwards;">
+            <div class="s8-label" style="color:#ef4444;">❌ Without Tenantflow</div>
+            <div class="s8-item"><span class="s8-time text-red">45 min</span><span style="color:#94a3b8;">Manually chase rent arrears</span></div>
+            <div class="s8-item"><span class="s8-time text-red">30 min</span><span style="color:#94a3b8;">Type and send Form 9 notices</span></div>
+            <div class="s8-item"><span class="s8-time text-red">60 min</span><span style="color:#94a3b8;">Monthly owner statements</span></div>
+            <div class="s8-item"><span class="s8-time text-red">20 min</span><span style="color:#94a3b8;">Track lease renewals</span></div>
+            <div class="s8-item"><span class="s8-time text-red">25 min</span><span style="color:#94a3b8;">Coordinate maintenance jobs</span></div>
+            <div style="margin-top:10px;padding:8px;background:#7f1d1d;border-radius:6px;text-align:center;font-size:13px;font-weight:900;color:#fca5a5;">3 hrs 20 min / day</div>
+          </div>
+          <div class="s8-vs">VS</div>
+          <div class="s8-after" style="opacity:0;animation:fadeUp 0.6s 1.3s forwards;">
+            <div class="s8-label" style="color:#22c55e;">✅ With Tenantflow</div>
+            <div class="s8-item"><span class="s8-time text-green">2 min</span><span style="color:#94a3b8;">AI monitors + auto-generates forms</span></div>
+            <div class="s8-item"><span class="s8-time text-green">1 min</span><span style="color:#94a3b8;">One click — Form 9 sent</span></div>
+            <div class="s8-item"><span class="s8-time text-green">8 sec</span><span style="color:#94a3b8;">All statements generated + emailed</span></div>
+            <div class="s8-item"><span class="s8-time text-green">2 min</span><span style="color:#94a3b8;">Pipeline view — action in one click</span></div>
+            <div class="s8-item"><span class="s8-time text-green">3 min</span><span style="color:#94a3b8;">Assign contractor + Form 9 auto-sent</span></div>
+            <div style="margin-top:10px;padding:8px;background:#14532d;border-radius:6px;text-align:center;font-size:13px;font-weight:900;color:#4ade80;">~20 min / day</div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:20px;">
+          <button class="s8-cta">🚀 Get Early Access to Tenantflow</button>
+          <div class="s8-foot">Queensland Property Managers · RTRA Act 2008 Compliant · Backed by AI · Free to try</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scenes -->
+
+  <!-- Controls overlay -->
+  <div id="controls">
+    <div id="progress-bar" onclick="seekTo(event)"><div id="progress-fill" style="width:0%"></div></div>
+    <div id="ctrl-row">
+      <button class="ctrl-btn" onclick="prevScene()" title="Previous">
+        <svg width="16" height="16" fill="white" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+      </button>
+      <button class="ctrl-btn" id="play-btn" onclick="togglePlay()" title="Play/Pause">
+        <svg id="play-icon" width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pause-icon" width="20" height="20" fill="white" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button class="ctrl-btn" onclick="nextScene()" title="Next">
+        <svg width="16" height="16" fill="white" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2.5-6 5.5-4v8l-5.5-4zM16 6h2v12h-2z"/></svg>
+      </button>
+      <span id="scene-title" style="color:rgba(255,255,255,0.6);">Tenantflow — Product Demo</span>
+      <button id="speed-btn" onclick="cycleSpeed()">1×</button>
+      <span id="scene-counter">1 / 8</span>
+    </div>
+    <div id="scene-dots"></div>
+  </div>
+</div><!-- /player -->
+
+<div id="thumb-row">
+  <div class="thumb active" onclick="jumpTo(0)"><span>🎬</span><span class="thumb-label">Intro</span></div>
+  <div class="thumb" onclick="jumpTo(1)"><span>🤖</span><span class="thumb-label">AI Inbox</span></div>
+  <div class="thumb" onclick="jumpTo(2)"><span>💸</span><span class="thumb-label">Arrears</span></div>
+  <div class="thumb" onclick="jumpTo(3)"><span>📋</span><span class="thumb-label">Renewals</span></div>
+  <div class="thumb" onclick="jumpTo(4)"><span>🔍</span><span class="thumb-label">Inspections</span></div>
+  <div class="thumb" onclick="jumpTo(5)"><span>📈</span><span class="thumb-label">Statements</span></div>
+  <div class="thumb" onclick="jumpTo(6)"><span>⚖️</span><span class="thumb-label">Compliance</span></div>
+  <div class="thumb" onclick="jumpTo(7)"><span>🚀</span><span class="thumb-label">CTA</span></div>
+</div>
+<div id="video-label">TENANTFLOW · PRODUCT DEMO · © 2026 VA REALTY</div>
+</div>
+
+<script>
+const SCENE_DURATIONS = [6000, 11000, 11000, 11000, 11000, 11000, 11000, 10000]; // ms
+const SCENE_NAMES = ['Introduction','AI Inbox & Maintenance','Rent Arrears Escalation','Lease Renewal Pipeline','Routine Inspections','Owner Statements','Compliance & Bond','Get Started'];
+const NUM_SCENES = 8;
+
+let currentScene = 0;
+let playing = false;
+let sceneTimer = null;
+let progressTimer = null;
+let progressStart = 0;
+let progressElapsed = 0;
+let playbackSpeed = 1;
+const speeds = [1, 1.5, 2];
+let speedIdx = 0;
+let sceneAnimTimers = [];
+
+// Build dots
+const dotsEl = document.getElementById('scene-dots');
+for(let i=0;i<NUM_SCENES;i++){
+  const d = document.createElement('div');
+  d.className = 'scene-dot' + (i===0?' active':'');
+  d.onclick = ()=>jumpTo(i);
+  dotsEl.appendChild(d);
+}
+
+function showScene(n, autoAnimate=true){
+  // Clear old animations
+  sceneAnimTimers.forEach(t=>clearTimeout(t));
+  sceneAnimTimers = [];
+
+  document.querySelectorAll('.scene').forEach((s,i)=>{
+    s.style.display = i===n ? 'flex' : 'none';
+    s.classList.toggle('active', i===n);
+  });
+  document.querySelectorAll('.scene-dot').forEach((d,i)=>d.classList.toggle('active',i===n));
+  document.querySelectorAll('.thumb').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.getElementById('scene-title').textContent = SCENE_NAMES[n];
+  document.getElementById('scene-counter').textContent = (n+1)+' / '+NUM_SCENES;
+  if(autoAnimate) runSceneAnimations(n);
+}
+
+function runSceneAnimations(n){
+  const t = (ms, fn) => { const id = setTimeout(fn, ms/playbackSpeed); sceneAnimTimers.push(id); };
+  if(n===1){ // AI Inbox
+    t(300, ()=>{ document.getElementById('s2-e1').classList.add('show'); });
+    t(700, ()=>{ document.getElementById('s2-e2').classList.add('show'); });
+    t(1100, ()=>{ document.getElementById('s2-e3').classList.add('show'); });
+    t(1600, ()=>{ document.getElementById('s2-ai1').textContent='🤖 URGENT — Essential Service'; document.getElementById('s2-ai1').style.background='#7f1d1d'; document.getElementById('s2-ai1').style.color='#fca5a5'; document.getElementById('s2-ai1').classList.add('ai-scanning'); });
+    t(2200, ()=>{ document.getElementById('s2-panel').style.opacity='1'; });
+    t(2800, ()=>{ document.getElementById('s2-form').classList.add('show'); });
+    t(3400, ()=>{ document.getElementById('s2-actions').style.opacity='1'; });
+  }
+  if(n===2){ // Arrears
+    t(300, ()=>{ document.getElementById('s3-r1').classList.add('show'); });
+    t(600, ()=>{ document.getElementById('s3-r2').classList.add('show'); });
+    t(900, ()=>{ document.getElementById('s3-r3').classList.add('show'); });
+    t(1400, ()=>{ document.getElementById('s3-form').style.opacity='1'; });
+    t(2000, ()=>{ document.getElementById('s3-stats').style.opacity='1'; });
+    t(2600, ()=>{ document.getElementById('s3-tl').classList.add('show'); });
+  }
+  if(n===3){ // Leases
+    t(300, ()=>{ document.getElementById('s4-l1').classList.add('show'); });
+    t(600, ()=>{ document.getElementById('s4-l2').classList.add('show'); });
+    t(900, ()=>{ document.getElementById('s4-l3').classList.add('show'); });
+    t(1400, ()=>{ document.getElementById('s4-letter').style.opacity='1'; });
+    t(2200, ()=>{ document.getElementById('s4-kpi').style.opacity='1'; });
+  }
+  if(n===4){ // Inspections
+    t(300, ()=>{ document.getElementById('s5-a').classList.add('show'); });
+    t(700, ()=>{ document.getElementById('s5-b').classList.add('show'); });
+    t(1100, ()=>{ document.getElementById('s5-c').classList.add('show'); });
+    t(1500, ()=>{ document.getElementById('s5-d').classList.add('show'); });
+    t(2000, ()=>{ document.getElementById('s5-pdf').style.opacity='1'; });
+    t(3000, ()=>{ document.getElementById('s5-btn').style.opacity='1'; });
+  }
+  if(n===5){ // Owner Statements
+    ['s6-c1','s6-c2','s6-c3','s6-c4','s6-c5','s6-c6'].forEach((id,i)=>{
+      t(400 + i*250, ()=>{ document.getElementById(id).classList.add('show'); });
+    });
+    // Animate rings
+    [1,2,3,4,5,6].forEach((i)=>{
+      t(400 + (i-1)*250 + 300, ()=>{
+        const r = document.getElementById('r'+i);
+        if(r) r.style.strokeDashoffset = '0';
+      });
+    });
+    t(2200, ()=>{ document.getElementById('s6-total').style.opacity='1'; });
+  }
+  if(n===6){ // Compliance
+    t(300, ()=>{ document.getElementById('s7-stats').classList.add('show'); });
+    t(700, ()=>{ document.getElementById('s7-b').classList.add('show'); });
+    t(1100, ()=>{ document.getElementById('s7-q').classList.add('show'); });
+    t(1600, ()=>{ document.getElementById('s7-calert').style.opacity='1'; });
+  }
+}
+
+function resetScene(n){
+  if(n===1){
+    ['s2-e1','s2-e2','s2-e3'].forEach(id=>{ const el=document.getElementById(id); if(el){el.classList.remove('show');} });
+    const p=document.getElementById('s2-panel'); if(p) p.style.opacity='0';
+    const f=document.getElementById('s2-form'); if(f) f.classList.remove('show');
+    const a=document.getElementById('s2-actions'); if(a) a.style.opacity='0';
+    const ai=document.getElementById('s2-ai1'); if(ai){ai.textContent='🤖 Analysing...'; ai.style.background='#1e3a5f'; ai.style.color='#60a5fa'; ai.classList.remove('ai-scanning');}
+  }
+  if(n===2){
+    ['s3-r1','s3-r2','s3-r3'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
+    const f=document.getElementById('s3-form'); if(f) f.style.opacity='0';
+    const s=document.getElementById('s3-stats'); if(s) s.style.opacity='0';
+    const tl=document.getElementById('s3-tl'); if(tl) tl.classList.remove('show');
+  }
+  if(n===3){
+    ['s4-l1','s4-l2','s4-l3'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
+    const l=document.getElementById('s4-letter'); if(l) l.style.opacity='0';
+    const k=document.getElementById('s4-kpi'); if(k) k.style.opacity='0';
+  }
+  if(n===4){
+    ['s5-a','s5-b','s5-c','s5-d'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
+    const p=document.getElementById('s5-pdf'); if(p) p.style.opacity='0';
+    const b=document.getElementById('s5-btn'); if(b) b.style.opacity='0';
+  }
+  if(n===5){
+    ['s6-c1','s6-c2','s6-c3','s6-c4','s6-c5','s6-c6'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
+    [1,2,3,4,5,6].forEach(i=>{const r=document.getElementById('r'+i);if(r)r.style.strokeDashoffset='100';});
+    const t=document.getElementById('s6-total'); if(t) t.style.opacity='0';
+  }
+  if(n===6){
+    const s=document.getElementById('s7-stats'); if(s) s.classList.remove('show');
+    ['s7-b','s7-q'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
+    const c=document.getElementById('s7-calert'); if(c) c.style.opacity='0';
+  }
+}
+
+function updateProgress(elapsed, total){
+  const pct = Math.min(100, (elapsed/total)*100);
+  // Overall progress includes past scenes
+  const totalDuration = SCENE_DURATIONS.reduce((a,b)=>a+b,0);
+  const pastDuration = SCENE_DURATIONS.slice(0,currentScene).reduce((a,b)=>a+b,0);
+  const overallPct = ((pastDuration + elapsed) / totalDuration) * 100;
+  document.getElementById('progress-fill').style.width = overallPct+'%';
+}
+
+function startSceneTimer(){
+  if(sceneTimer) clearInterval(sceneTimer);
+  if(progressTimer) clearInterval(progressTimer);
+  progressStart = Date.now();
+  progressElapsed = 0;
+  const dur = SCENE_DURATIONS[currentScene] / playbackSpeed;
+  progressTimer = setInterval(()=>{
+    progressElapsed = Date.now() - progressStart;
+    updateProgress(progressElapsed * playbackSpeed, SCENE_DURATIONS[currentScene]);
+    if(progressElapsed >= dur){
+      clearInterval(progressTimer);
+    }
+  }, 50);
+  sceneTimer = setTimeout(()=>{
+    if(currentScene < NUM_SCENES-1){
+      goToScene(currentScene+1);
+    } else {
+      playing = false;
+      setPlayIcon(false);
+    }
+  }, dur);
+}
+
+function stopTimers(){
+  if(sceneTimer) clearTimeout(sceneTimer);
+  if(progressTimer) clearInterval(progressTimer);
+}
+
+function goToScene(n){
+  resetScene(currentScene);
+  currentScene = n;
+  showScene(n, true);
+  if(playing) startSceneTimer();
+}
+
+function jumpTo(n){
+  stopTimers();
+  resetScene(currentScene);
+  currentScene = n;
+  showScene(n, true);
+  if(playing) startSceneTimer();
+}
+
+function nextScene(){
+  stopTimers();
+  if(currentScene < NUM_SCENES-1) goToScene(currentScene+1);
+}
+
+function prevScene(){
+  stopTimers();
+  if(currentScene > 0) goToScene(currentScene-1);
+}
+
+function setPlayIcon(isPlaying){
+  document.getElementById('play-icon').style.display = isPlaying?'none':'block';
+  document.getElementById('pause-icon').style.display = isPlaying?'block':'none';
+}
+
+function togglePlay(){
+  playing = !playing;
+  setPlayIcon(playing);
+  if(playing){
+    startSceneTimer();
+  } else {
+    stopTimers();
+  }
+}
+
+function cycleSpeed(){
+  speedIdx = (speedIdx+1) % speeds.length;
+  playbackSpeed = speeds[speedIdx];
+  document.getElementById('speed-btn').textContent = playbackSpeed+'×';
+  if(playing){
+    stopTimers();
+    startSceneTimer();
+  }
+}
+
+function seekTo(e){
+  const bar = document.getElementById('progress-bar');
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  const totalDuration = SCENE_DURATIONS.reduce((a,b)=>a+b,0);
+  let target = pct * totalDuration;
+  let accumulated = 0;
+  for(let i=0;i<NUM_SCENES;i++){
+    if(target <= accumulated + SCENE_DURATIONS[i]){
+      jumpTo(i);
+      break;
+    }
+    accumulated += SCENE_DURATIONS[i];
+  }
+}
+
+// Keyboard controls
+document.addEventListener('keydown',e=>{
+  if(e.key===' '){e.preventDefault();togglePlay();}
+  if(e.key==='ArrowRight') nextScene();
+  if(e.key==='ArrowLeft') prevScene();
+});
+
+// Init
+showScene(0, false);
+// Auto-start after brief delay
+setTimeout(()=>{
+  playing = true;
+  setPlayIcon(true);
+  startSceneTimer();
+  runSceneAnimations(0);
+}, 800);
+</script>
+</body>
+</html>
