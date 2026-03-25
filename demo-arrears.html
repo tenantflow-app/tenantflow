@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tenantflow — Rent Arrears Management Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; overflow-x: hidden; }
+
+  /* HEADER */
+  .header { background: #fff; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; }
+  .logo { font-size: 20px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; }
+  .logo span { color: #dc2626; }
+
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-links a { color: #475569; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: #1e293b; }
+  .nav-links a.active { color: #dc2626; font-weight: 600; }
+
+  /* HERO */
+  .hero { text-align: center; padding: 64px 32px 40px; background: #fff; }
+  .feature-tag { display: inline-flex; align-items: center; gap: 8px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; color: #1e293b; line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px; }
+  .hero h1 em { color: #dc2626; font-style: normal; }
+  .hero p { color: #64748b; font-size: 18px; max-width: 620px; margin: 0 auto 40px; line-height: 1.6; }
+
+  .metrics { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
+  .metric-pill { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .metric-val { font-size: 24px; font-weight: 800; color: #dc2626; }
+  .metric-label { font-size: 12px; color: #64748b; }
+
+  /* DEMO CONTAINER */
+  .demo-wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; background: #fff; }
+
+  /* TIMELINE */
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #f59e0b, #22c55e); opacity: 0.25; }
+
+  .step { display: flex; gap: 20px; margin-bottom: 12px; opacity: 0; transform: translateY(24px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .step.visible { opacity: 1; transform: translateY(0); }
+
+  .step-icon { width: 58px; height: 58px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; position: relative; z-index: 1; border: 2px solid #e2e8f0; background: #fff; }
+  .step-icon.red { background: #fee2e2; border-color: #fecaca; }
+  .step-icon.amber { background: #fef3c7; border-color: #fcd34d; }
+  .step-icon.orange { background: #fed7aa; border-color: #fdba74; }
+  .step-icon.green { background: #dcfce7; border-color: #86efac; }
+  .step-icon.purple { background: #f3e8ff; border-color: #e9d5ff; }
+
+  .step-content { flex: 1; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 8px; }
+  .step-content:hover { border-color: #cbd5e1; background: #f8fafc; transition: all 0.2s; }
+
+  .step-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .step-num { font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase; }
+  .step-time { font-size: 11px; color: #94a3b8; margin-left: auto; }
+
+  .badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 12px; }
+  .badge-red { background: #fee2e2; color: #dc2626; }
+  .badge-amber { background: #fef3c7; color: #b45309; }
+  .badge-orange { background: #fed7aa; color: #92400e; }
+  .badge-green { background: #dcfce7; color: #16a34a; }
+  .badge-purple { background: #f3e8ff; color: #7c3aed; }
+  .badge-qld { background: #dbeafe; color: #1e40af; }
+
+  .step-title { font-size: 17px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+  .step-desc { font-size: 14px; color: #64748b; line-height: 1.6; }
+
+  /* MESSAGE BUBBLES */
+  .msg-bubble { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 16px; margin-top: 16px; }
+  .msg-bubble.email { background: #fef3c7; border-color: #fde047; }
+  .msg-bubble.form { background: #dbeafe; border-color: #93c5fd; }
+
+  .msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .msg-avatar { width: 32px; height: 32px; border-radius: 50%; background: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .msg-from { font-size: 12px; font-weight: 600; color: #1e293b; }
+  .msg-when { font-size: 11px; color: #64748b; margin-left: auto; }
+  .msg-text { font-size: 13px; color: #334155; line-height: 1.5; }
+  .msg-text strong { color: #1e293b; }
+
+  .form-preview { background: #fafafa; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-top: 16px; font-size: 13px; }
+  .form-field { margin-bottom: 12px; }
+  .form-label { font-weight: 600; color: #374151; font-size: 12px; margin-bottom: 4px; }
+  .form-value { color: #6b7280; }
+
+  .schedule-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+  .schedule-table th { background: #f3f4f6; padding: 8px; text-align: left; font-weight: 600; color: #374151; border: 1px solid #e5e7eb; }
+  .schedule-table td { padding: 8px; border: 1px solid #e5e7eb; color: #6b7280; }
+  .schedule-table tr:last-child td { border-bottom: 1px solid #e5e7eb; }
+
+  .checklist { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-top: 16px; }
+  .check-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+  .check-item:last-child { margin-bottom: 0; }
+  .check-mark { width: 20px; height: 20px; border-radius: 4px; background: #dcfce7; border: 1px solid #86efac; display: flex; align-items: center; justify-content: center; color: #22c55e; font-weight: 700; flex-shrink: 0; }
+  .check-label { color: #374151; }
+
+  .approval-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-approve { background: #22c55e; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: default; }
+  .approved-stamp { background: #dcfce7; border: 1px solid #86efac; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: 700; color: #16a34a; display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; }
+
+  /* LEGISLATION BOX */
+  .legislation-box { background: #dbeafe; border: 2px solid #0284c7; border-radius: 16px; padding: 24px; margin: 48px 0; }
+  .legislation-box h3 { color: #0c4a6e; font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+  .legislation-box ul { margin-left: 20px; }
+  .legislation-box li { color: #0369a1; font-size: 13px; line-height: 1.6; margin-bottom: 8px; }
+  .legislation-box li strong { color: #0c4a6e; }
+
+  /* FINAL RESULT */
+  .result-card { background: linear-gradient(135deg, #dcfce7 0%, #fef3c7 100%); border: 2px solid #86efac; border-radius: 20px; padding: 40px 32px; text-align: center; margin-top: 48px; opacity: 0; transform: translateY(24px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  .result-card.visible { opacity: 1; transform: translateY(0); }
+  .result-icon { font-size: 52px; margin-bottom: 16px; }
+  .result-title { font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
+  .result-sub { font-size: 15px; color: #475569; max-width: 520px; margin: 0 auto 32px; line-height: 1.6; }
+  .result-stats { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; margin-top: 24px; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 32px; font-weight: 800; color: #dc2626; }
+  .stat-label { font-size: 12px; color: #64748b; margin-top: 6px; font-weight: 500; }
+
+  /* CTA */
+  .cta-bar { text-align: center; padding: 48px 24px; background: #fff; border-top: 1px solid #e2e8f0; }
+  .cta-bar h2 { font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 8px; }
+  .cta-bar p { color: #64748b; font-size: 15px; margin-bottom: 24px; }
+  .cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { background: #dc2626; color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; transition: background 0.2s; }
+  .btn-primary:hover { background: #b91c1c; }
+  .btn-secondary { background: #f1f5f9; color: #1e293b; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 15px; border: 1px solid #e2e8f0; transition: all 0.2s; }
+  .btn-secondary:hover { background: #e2e8f0; }
+
+  /* OTHER DEMOS BAR */
+  .other-demos { background: #f1f5f9; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 24px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .demo-chip { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e2e8f0; color: #475569; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .demo-chip:hover { border-color: #cbd5e1; background: #f8fafc; }
+  .demo-chip.active { background: #fee2e2; border-color: #fecaca; color: #dc2626; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .header { padding: 16px 20px; }
+    .logo { font-size: 18px; }
+    .nav-links { gap: 12px; font-size: 13px; }
+    .hero { padding: 40px 20px; }
+    .metrics { gap: 12px; }
+    .metric-pill { padding: 12px 16px; }
+    .metric-val { font-size: 20px; }
+    .step { gap: 16px; }
+    .step-icon { width: 48px; height: 48px; font-size: 18px; }
+    .step-content { padding: 16px; }
+    .result-stats { gap: 20px; }
+    .stat-val { font-size: 26px; }
+    .legislation-box { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">🏠 Tenant<span>flow</span></div>
+  <div class="nav-links">
+    <a href="demo-inbox.html">AI Inbox</a>
+    <a href="demo-tenants.html">Tenant Onboarding</a>
+    <a href="demo-compliance.html">Compliance</a>
+    <a href="demo-maintenance.html">Maintenance</a>
+    <a href="demo-arrears.html" class="active">Arrears</a>
+    <a href="demo-owners.html">Owner Reports</a>
+  </div>
+</div>
+
+<!-- OTHER DEMOS BAR -->
+<div class="other-demos">
+  <a class="demo-chip" href="demo-inbox.html">📬 AI Inbox</a>
+  <a class="demo-chip" href="demo-tenants.html">👥 Tenant Onboarding</a>
+  <a class="demo-chip" href="demo-compliance.html">✅ Compliance</a>
+  <a class="demo-chip" href="demo-maintenance.html">🔧 Maintenance</a>
+  <a class="demo-chip active" href="demo-arrears.html">💰 Rent Arrears</a>
+  <a class="demo-chip" href="demo-owners.html">📊 Owner Reports</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="feature-tag">🇦🇺 Queensland RTRA Compliant</div>
+  <h1>Rent Arrears, <em>Handled Automatically</em></h1>
+  <p>From missed payment to formal notice — AI manages every step, every time, within Queensland law.</p>
+
+  <div class="metrics">
+    <div class="metric-pill">
+      <div class="metric-val">2 days</div>
+      <div class="metric-label">Time to first notice</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">97%</div>
+      <div class="metric-label">Recovery rate</div>
+    </div>
+    <div class="metric-pill">
+      <div class="metric-val">100%</div>
+      <div class="metric-label">RTRA compliant</div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO TIMELINE -->
+<div class="demo-wrap">
+<div class="timeline">
+
+  <!-- STEP 1 -->
+  <div class="step" id="s1">
+    <div class="step-icon red">🔴</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 01 — Day 1</span>
+        <span class="badge badge-red">Missed Payment Detected</span>
+      </div>
+      <div class="step-title">Missed Payment Detected</div>
+      <div class="step-desc">AI detects $540/week rent for Sarah Mitchell at 14 Coral St, Stones Corner has not been received. Automatic reminder SMS + email sent at 9:00am.</div>
+
+      <div class="msg-bubble">
+        <div class="msg-header">
+          <div class="msg-avatar">TF</div>
+          <div class="msg-from">Automatic SMS to Tenant</div>
+          <div class="msg-when">9:00am</div>
+        </div>
+        <div class="msg-text">Hi Sarah, your rent payment of <strong>$540 was due yesterday</strong>. Please arrange payment today or contact us. Reference: TCH-2024-001 — Tenantflow</div>
+      </div>
+
+      <div style="background: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 10px 12px; margin-top: 14px; font-size: 12px; color: #1e40af;">
+        <strong>⚖️ RTRA s.93:</strong> Rent payment obligations. Tenant has duty to pay rent on due date.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="s2">
+    <div class="step-icon amber">🟡</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 02 — Day 3</span>
+        <span class="badge badge-amber">Escalation</span>
+      </div>
+      <div class="step-title">No Response — Escalation</div>
+      <div class="step-desc">No response received. AI escalates automatically. Form 11 Notice to Remedy is drafted with correct QLD details and legal language. Requires tenant response within 7 days (RTRA s.78).</div>
+
+      <div class="form-preview">
+        <div class="form-label">FORM 11 — NOTICE TO REMEDY BREACH</div>
+        <div style="border-bottom: 1px solid #e5e7eb; padding-bottom: 12px; margin-bottom: 12px;">
+          <div class="form-field">
+            <strong>To:</strong> Sarah Mitchell, 14 Coral St, Stones Corner QLD 4120
+          </div>
+          <div class="form-field">
+            <strong>Property:</strong> Unit 2, 14 Coral St, Stones Corner
+          </div>
+        </div>
+        <div class="form-field">
+          <strong>Arrears Amount:</strong> $1,080 (2 weeks @ $540/week)
+        </div>
+        <div class="form-field">
+          <strong>Breach:</strong> Failure to pay rent by due date contrary to RTRA Act s.93
+        </div>
+        <div class="form-field">
+          <strong>Remedy Period:</strong> 7 calendar days from date of notice (ends <strong>10 March 2024</strong>)
+        </div>
+        <div class="form-field">
+          <strong>Action Required:</strong> Pay full arrears amount or contact property manager to discuss payment plan
+        </div>
+      </div>
+
+      <div class="msg-bubble email">
+        <div class="msg-header">
+          <div class="msg-avatar" style="background: #b45309;">PM</div>
+          <div class="msg-from">Email to Owner — Jessica Holmes</div>
+          <div class="msg-when">Instant</div>
+        </div>
+        <div class="msg-text"><strong>Arrears Alert:</strong> Tenant at 14 Coral St Unit 2 has not paid rent (now 2 weeks in arrears, $1,080). Form 11 Notice to Remedy has been prepared and sent. If not resolved within 7 days, next steps are QCAT application.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="s3">
+    <div class="step-icon orange">🟠</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 03 — Day 8</span>
+        <span class="badge badge-orange">Negotiation</span>
+      </div>
+      <div class="step-title">Tenant Responds — Payment Plan</div>
+      <div class="step-desc">Tenant requests payment plan to resolve arrears. AI drafts repayment agreement automatically for PM review and approval.</div>
+
+      <div class="form-preview">
+        <div class="form-label">PROPOSED PAYMENT PLAN</div>
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Week</th>
+              <th>Payment</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Week 1 (11–17 Mar)</td>
+              <td><strong>$1,080</strong></td>
+              <td>Catch-up arrears + current week</td>
+            </tr>
+            <tr>
+              <td>Week 2 (18–24 Mar)</td>
+              <td><strong>$640</strong></td>
+              <td>Current $540 + catch-up $100</td>
+            </tr>
+            <tr>
+              <td>Week 3 (25–31 Mar)</td>
+              <td><strong>$640</strong></td>
+              <td>Current $540 + catch-up $100</td>
+            </tr>
+            <tr>
+              <td>Week 4 (1–7 Apr)</td>
+              <td><strong>$540</strong></td>
+              <td>Fully cleared</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="approval-row">
+        <button class="btn-approve">✓ Approve Payment Plan (1-click)</button>
+      </div>
+      <div class="approved-stamp">✓ Plan approved by PM — Agreement sent to tenant</div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" id="s4">
+    <div class="step-icon red">🔴</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 04 — Day 10 (If unresponsive)</span>
+        <span class="badge badge-red">QCAT Prep</span>
+      </div>
+      <div class="step-title">Tribunal Application Package Ready</div>
+      <div class="step-desc">If tenant remains unresponsive and arrears exceed threshold: Full QCAT application package is prepared, verified for compliance, and ready for submission in minutes.</div>
+
+      <div class="checklist">
+        <div class="check-item">
+          <div class="check-mark">✓</div>
+          <div class="check-label">Rental ledger exported with payment history</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark">✓</div>
+          <div class="check-label">Form 2 (QCAT Application) auto-completed with property &amp; tenant details</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark">✓</div>
+          <div class="check-label">Notice periods verified (7-day remedy period satisfied)</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark">✓</div>
+          <div class="check-label">Bond claim calculation prepared (if applicable)</div>
+        </div>
+        <div class="check-item">
+          <div class="check-mark">✓</div>
+          <div class="check-label">All statutory declarations and evidence bundled</div>
+        </div>
+      </div>
+
+      <div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 12px; color: #7f1d1d;">
+        <strong>⚖️ QCAT Application:</strong> Everything needed for Queensland Civil and Administrative Tribunal is pre-packaged. PM submits online. Hearing typically scheduled within 2–3 weeks.
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step" id="s5">
+    <div class="step-icon green">✅</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 05 — Resolution</span>
+        <span class="badge badge-green">Closed</span>
+      </div>
+      <div class="step-title">Arrears Recovered & Case Closed</div>
+      <div class="step-desc">Sarah Mitchell: $1,620 arrears recovered via payment plan or tribunal order. Total PM time: 4 minutes. All actions documented for audit trail and future reference.</div>
+
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 16px; margin-top: 14px;">
+        <div style="font-size: 13px; color: #15803d; line-height: 1.6;">
+          <strong>Timeline Summary:</strong><br>
+          Day 1: Missed payment detected → SMS reminder sent<br>
+          Day 3: Form 11 sent (7-day remedy period begins)<br>
+          Day 8: Tenant negotiates payment plan<br>
+          Day 10: Agreement signed, payments commence<br>
+          Day 25: Final arrears payment received<br>
+          <br>
+          <strong>Result:</strong> Full recovery without tribunal escalation. Tenant re-established on current + catch-up schedule.
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+        <div style="background: #dbeafe; border: 1px solid #93c5fd; border-radius: 8px; padding: 12px; text-align: center;">
+          <div style="font-size: 16px; font-weight: 700; color: #1e40af;">$1,620</div>
+          <div style="font-size: 12px; color: #1e40af; margin-top: 4px;">Total recovered</div>
+        </div>
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px; text-align: center;">
+          <div style="font-size: 16px; font-weight: 700; color: #16a34a;">4 minutes</div>
+          <div style="font-size: 12px; color: #16a34a; margin-top: 4px;">PM time invested</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /timeline -->
+
+<!-- LEGISLATION BOX -->
+<div class="legislation-box">
+  <h3>⚖️ Queensland Legislation Covered Automatically</h3>
+  <ul>
+    <li><strong>RTRA s.93 — Rent Payment Obligations:</strong> Tenant's duty to pay rent on due date. Reminder triggers automatically.</li>
+    <li><strong>RTRA s.78 — Form 11 Notice to Remedy:</strong> 7-day notice period enforced. AI drafts with correct legal language.</li>
+    <li><strong>RTRA s.281 — Bond Claims:</strong> Bond deduction calculations pre-prepared if arrears exceed bond amount.</li>
+    <li><strong>QCAT Applications:</strong> Full tribunal application package generated, verified, and ready to lodge.</li>
+  </ul>
+</div>
+
+<!-- RESULT CARD -->
+<div class="result-card" id="result">
+  <div class="result-icon">💰</div>
+  <div class="result-title">Arrears management that's <em style="color: #dc2626;">on autopilot.</em></div>
+  <div class="result-sub">Sarah Mitchell's case shows typical workflow: missed payment detected, escalated fairly, payment plan negotiated, arrears recovered. All within Queensland law. All without PM chasing rent manually.</div>
+  <div class="result-stats">
+    <div class="stat">
+      <div class="stat-val">⏱️ 4 min</div>
+      <div class="stat-label">PM time invested</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">💰 $1,620</div>
+      <div class="stat-label">Arrears recovered</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">📋 0</div>
+      <div class="stat-label">Manual documents prepared</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">✅ 100%</div>
+      <div class="stat-label">RTRA compliance maintained</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /demo-wrap -->
+
+<!-- CTA -->
+<div class="cta-bar">
+  <h2>Stop chasing rent manually.</h2>
+  <p>Let AI manage arrears from detection to resolution — all within Queensland law.</p>
+  <div class="cta-btns">
+    <a href="index.html" class="btn-primary">Get Early Access</a>
+    <a href="index.html#demos" class="btn-secondary">← View All Feature Tours</a>
+  </div>
+</div>
+
+<script>
+const steps = ['s1', 's2', 's3', 's4', 's5'];
+let current = 0;
+const delays = [300, 1200, 2400, 3800, 5400];
+
+function showNext() {
+  if (current < steps.length) {
+    const el = document.getElementById(steps[current]);
+    if (el) el.classList.add('visible');
+    current++;
+    if (current < steps.length) {
+      setTimeout(showNext, delays[current] - delays[current-1]);
+    } else {
+      setTimeout(() => {
+        const result = document.getElementById('result');
+        if (result) result.classList.add('visible');
+      }, 1200);
+    }
+  }
+}
+
+// Start animation when page loads
+window.addEventListener('load', () => setTimeout(showNext, 400));
+
+// Also use intersection observer for restart on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.target.id === 's1' && !e.target.classList.contains('visible')) {
+      current = 0;
+      setTimeout(showNext, 200);
+    }
+  });
+}, { threshold: 0.3 });
+const s1 = document.getElementById('s1');
+if (s1) observer.observe(s1);
+</script>
+
+</body>
+</html>

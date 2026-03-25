@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenantflow Owner Reports - Feature Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #ffffff;
+            --bg-secondary: #f8fafc;
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --purple: #6366f1;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-left a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-left a:hover {
+            color: var(--primary);
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-center a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-center a:hover {
+            color: var(--text);
+        }
+
+        .nav-center a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-right a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-right a:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 40px 60px;
+            margin-top: 70px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: 50px;
+            left: -100px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 720px;
+        }
+
+        .feature-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            letter-spacing: 0.3px;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            max-width: 540px;
+            margin: 0 auto;
+        }
+
+        .metric-pill {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .metric-pill:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+
+        .metric-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main content */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 48px;
+            color: var(--text);
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+        }
+
+        /* Statement Card */
+        .statement-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 48px;
+            margin-bottom: 64px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .statement-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .statement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .statement-left h2 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .statement-period {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .statement-owner {
+            text-align: right;
+        }
+
+        .statement-owner .label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .statement-owner .name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            margin-top: 4px;
+        }
+
+        /* Table */
+        .statement-table {
+            width: 100%;
+            margin-bottom: 32px;
+            border-collapse: collapse;
+        }
+
+        .statement-table thead {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .statement-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .statement-table th:last-child {
+            text-align: right;
+        }
+
+        .statement-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .statement-table tbody tr:last-child td {
+            border-bottom: 2px solid var(--text);
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        .statement-table tbody tr:last-child {
+            font-weight: 700;
+            background: rgba(59, 130, 246, 0.04);
+        }
+
+        .statement-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .amount {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .amount.negative {
+            color: var(--danger);
+        }
+
+        /* Statement Footer */
+        .statement-footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-block {
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        .footer-block .label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .footer-block .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .footer-block .details {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .footer-block .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-check {
+            color: var(--success);
+        }
+
+        /* Counters Section */
+        .counters-section {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 48px;
+            margin-bottom: 64px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .counters-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .counters-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 32px;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .counters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+        }
+
+        .counter-box {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .counter-number {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .counter-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            margin-bottom: 64px;
+        }
+
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .how-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 32px 24px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .how-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .how-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.1);
+        }
+
+        .how-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .how-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .how-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Portfolio Table */
+        .portfolio-section {
+            margin-bottom: 64px;
+        }
+
+        .portfolio-wrapper {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .portfolio-wrapper.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .portfolio-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .portfolio-table thead {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .portfolio-table th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .portfolio-table th:last-child {
+            text-align: right;
+        }
+
+        .portfolio-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .portfolio-table tbody tr {
+            opacity: 0;
+            animation: slideIn 0.4s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .portfolio-table tbody tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .portfolio-table tbody tr.total {
+            background: var(--bg-secondary);
+            border-top: 2px solid var(--text);
+            border-bottom: 2px solid var(--text);
+            font-weight: 700;
+        }
+
+        .owner-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .property-count {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .monthly-rent {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* Compliance Callout */
+        .compliance-callout {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 14px;
+            padding: 32px;
+            margin-bottom: 64px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .compliance-callout.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .compliance-callout h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .compliance-callout ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .compliance-callout li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .compliance-callout li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+            border-radius: 16px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cta-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cta-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary-white {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary-white:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 20px;
+                flex-wrap: wrap;
+                height: auto;
+            }
+
+            .nav-center {
+                gap: 20px;
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                padding: 16px 0;
+            }
+
+            .statement-card {
+                padding: 24px;
+            }
+
+            .statement-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .statement-owner {
+                text-align: left;
+            }
+
+            .statement-footer {
+                grid-template-columns: 1fr;
+            }
+
+            .statement-table {
+                font-size: 12px;
+            }
+
+            .statement-table td, .statement-table th {
+                padding: 10px 8px;
+            }
+
+            .hero {
+                padding: 80px 20px 40px;
+            }
+
+            .hero-metrics {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            .counters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                padding: 40px 20px;
+            }
+
+            .cta-section h2 {
+                font-size: 24px;
+            }
+
+            .portfolio-table {
+                font-size: 12px;
+            }
+
+            .portfolio-table td, .portfolio-table th {
+                padding: 10px 8px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fade-in-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-left">
+            <span>🏠</span>
+            <a href="index.html">Tenantflow</a>
+        </div>
+        <div class="nav-center">
+            <a href="demo-inbox.html">AI Inbox</a>
+            <a href="demo-tenants.html">Tenant Onboarding</a>
+            <a href="demo-compliance.html">Compliance</a>
+            <a href="demo-maintenance.html">Maintenance</a>
+            <a href="demo-arrears.html">Arrears</a>
+            <a href="demo-owners.html" class="active">Owner Reports</a>
+        </div>
+        <div class="nav-right">
+            <a href="index.html">Get Early Access</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="feature-badge">
+                <span>⚡</span>
+                <span>Automated Monthly Reporting</span>
+            </div>
+            <h1>Owner Reports. Generated in <span class="highlight">30 Seconds.</span></h1>
+            <p>Beautiful, professional owner statements — auto-generated from your rent ledger, maintenance records, and compliance data.</p>
+
+            <div class="hero-metrics">
+                <div class="metric-pill">
+                    <div class="metric-value">30 sec</div>
+                    <div class="metric-label">Report generation time</div>
+                </div>
+                <div class="metric-pill">
+                    <div class="metric-value">18</div>
+                    <div class="metric-label">Owners managed</div>
+                </div>
+                <div class="metric-pill">
+                    <div class="metric-value">Zero</div>
+                    <div class="metric-label">Hours on statements</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statement Demo Section -->
+    <div class="container">
+        <section>
+            <h2 class="section-title">March 2026 Owner Statement</h2>
+            <p class="section-subtitle">Professional document generated and ready to send to your owner on the 1st of every month.</p>
+
+            <div class="statement-card">
+                <div class="statement-header">
+                    <div class="statement-left">
+                        <h2>Tenantflow | Owner Statement</h2>
+                        <div class="statement-period">March 2026</div>
+                    </div>
+                    <div class="statement-owner">
+                        <div class="label">Owner</div>
+                        <div class="name">James & Carol Wu</div>
+                    </div>
+                </div>
+
+                <table class="statement-table">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Rent Collected</th>
+                            <th>Maintenance Expended</th>
+                            <th>Net Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>9 Grevillea St, Nerang</td>
+                            <td class="amount">$2,000.00</td>
+                            <td class="amount">$0.00</td>
+                            <td class="amount">$2,000.00</td>
+                        </tr>
+                        <tr>
+                            <td>11 Wattle Close, Varsity Lakes</td>
+                            <td class="amount">$2,320.00</td>
+                            <td class="amount negative">-$180.00</td>
+                            <td class="amount">$2,140.00</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TOTAL</strong></td>
+                            <td class="amount"><strong>$4,320.00</strong></td>
+                            <td class="amount"><strong>-$180.00</strong></td>
+                            <td class="amount"><strong>$4,140.00</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="statement-footer">
+                    <div class="footer-block">
+                        <div class="label">Disbursement Details</div>
+                        <div class="value">$4,140.00</div>
+                        <div class="details">Transferred to BSB 012-345 on 31/03/2026</div>
+                        <div class="status">
+                            <span class="status-check">✓</span>
+                            <span>Completed</span>
+                        </div>
+                    </div>
+                    <div class="footer-block">
+                        <div class="label">Management Fee</div>
+                        <div class="value">$367.20</div>
+                        <div class="details">8.5% of rent collected</div>
+                        <div class="status">
+                            <span class="status-check">✓</span>
+                            <span>All properties compliant</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Counters Section -->
+        <section>
+            <div class="counters-section">
+                <div class="counters-title">Portfolio-Wide March Performance</div>
+                <div class="counters-grid">
+                    <div class="counter-box">
+                        <div class="counter-number">$47,280</div>
+                        <div class="counter-label">Total Rent Collected</div>
+                    </div>
+                    <div class="counter-box">
+                        <div class="counter-number">18</div>
+                        <div class="counter-label">Statements Generated</div>
+                    </div>
+                    <div class="counter-box">
+                        <div class="counter-number">30 sec</div>
+                        <div class="counter-label">Total Time Invested</div>
+                    </div>
+                    <div class="counter-box">
+                        <div class="counter-number">100%</div>
+                        <div class="counter-label">Delivered On Time</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-it-works">
+            <h2 class="section-title">How It Works</h2>
+            <div class="how-it-works-grid">
+                <div class="how-card">
+                    <div class="how-icon">🤖</div>
+                    <h3 class="how-title">AI Aggregates Data</h3>
+                    <p class="how-desc">Pulls rent receipts, maintenance invoices, and compliance records automatically from your system.</p>
+                </div>
+                <div class="how-card">
+                    <div class="how-icon">📊</div>
+                    <h3 class="how-title">Generates Statement</h3>
+                    <p class="how-desc">Professional PDF statements formatted to industry standards with all mandatory disclosures.</p>
+                </div>
+                <div class="how-card">
+                    <div class="how-icon">📧</div>
+                    <h3 class="how-title">Delivers to Owners</h3>
+                    <p class="how-desc">Auto-emailed to each owner on the 1st of every month with customizable timing.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Overview -->
+        <section class="portfolio-section">
+            <h2 class="section-title">Your Portfolio Overview</h2>
+            <p class="section-subtitle">All 18 owners, 80 properties, and their monthly rental income summary.</p>
+
+            <div class="portfolio-wrapper">
+                <table class="portfolio-table">
+                    <thead>
+                        <tr>
+                            <th>Owner Name</th>
+                            <th>Properties</th>
+                            <th>Monthly Rent</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="animation-delay: 0s;">
+                            <td class="owner-name">Greg Mitchell</td>
+                            <td class="property-count">1 property</td>
+                            <td class="monthly-rent">$2,160.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.05s;">
+                            <td class="owner-name">Lisa Pham</td>
+                            <td class="property-count">3 properties</td>
+                            <td class="monthly-rent">$4,860.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.1s;">
+                            <td class="owner-name">James & Carol Wu</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$4,320.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.15s;">
+                            <td class="owner-name">Raj Patel</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$2,520.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.2s;">
+                            <td class="owner-name">Sandra Anderson</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$3,840.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.25s;">
+                            <td class="owner-name">Betty Williams</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$3,960.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.3s;">
+                            <td class="owner-name">Michael Chen</td>
+                            <td class="property-count">3 properties</td>
+                            <td class="monthly-rent">$5,280.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.35s;">
+                            <td class="owner-name">Amanda Jackson</td>
+                            <td class="property-count">1 property</td>
+                            <td class="monthly-rent">$1,950.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.4s;">
+                            <td class="owner-name">David Matthews</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$3,420.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.45s;">
+                            <td class="owner-name">Emma Rodriguez</td>
+                            <td class="property-count">1 property</td>
+                            <td class="monthly-rent">$2,280.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.5s;">
+                            <td class="owner-name">Francis O'Brien</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$3,240.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.55s;">
+                            <td class="owner-name">Grace Lee</td>
+                            <td class="property-count">3 properties</td>
+                            <td class="monthly-rent">$4,680.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.6s;">
+                            <td class="owner-name">Henry Thompson</td>
+                            <td class="property-count">1 property</td>
+                            <td class="monthly-rent">$2,040.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.65s;">
+                            <td class="owner-name">Iris Kumar</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$3,600.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.7s;">
+                            <td class="owner-name">Jonathan Davies</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$2,880.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.75s;">
+                            <td class="owner-name">Katherine Price</td>
+                            <td class="property-count">3 properties</td>
+                            <td class="monthly-rent">$5,040.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.8s;">
+                            <td class="owner-name">Liam Murphy</td>
+                            <td class="property-count">1 property</td>
+                            <td class="monthly-rent">$2,100.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr style="animation-delay: 0.85s;">
+                            <td class="owner-name">Margaret Brown</td>
+                            <td class="property-count">2 properties</td>
+                            <td class="monthly-rent">$3,180.00</td>
+                            <td><span class="status-badge">✓ Paid</span></td>
+                        </tr>
+                        <tr class="total" style="animation-delay: 0.9s;">
+                            <td class="owner-name">PORTFOLIO TOTAL</td>
+                            <td class="property-count">80 properties</td>
+                            <td class="monthly-rent">$47,280.00</td>
+                            <td><span class="status-badge">✓ All Paid</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Compliance Callout -->
+        <section>
+            <div class="compliance-callout">
+                <h3>Queensland Compliance Built In</h3>
+                <ul>
+                    <li>Management Trust Accounting compliant under Queensland Property Agents Act 2000</li>
+                    <li>All statements include GST details for tax compliance</li>
+                    <li>Automatic disbursement reconciliation and reporting</li>
+                    <li>Audit-ready documentation and transaction trails</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section>
+            <div class="cta-section">
+                <h2>Your owners deserve better reports.</h2>
+                <div class="cta-buttons">
+                    <a href="index.html" class="btn btn-primary-white">Get Early Access</a>
+                    <a href="index.html#demos" class="btn btn-secondary">← View All Feature Tours</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements with fade-in-on-scroll class
+        document.querySelectorAll('.statement-card, .counters-section, .how-card, .portfolio-wrapper, .compliance-callout, .cta-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Animated counters
+        function animateCounter(element, target) {
+            let current = 0;
+            const duration = 2000;
+            const increment = target / (duration / 16);
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    if (typeof target === 'string' && target.includes('%')) {
+                        element.textContent = Math.floor(current) + '%';
+                    } else if (target > 100) {
+                        element.textContent = '$' + Math.floor(current).toLocaleString();
+                    } else {
+                        element.textContent = Math.floor(current);
+                    }
+                }
+            }, 16);
+        }
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counterNumber = entry.target.querySelector('.counter-number');
+                    if (counterNumber && !counterNumber.dataset.animated) {
+                        const text = counterNumber.textContent.trim();
+                        let target;
+
+                        if (text.includes('$')) {
+                            target = parseInt(text.replace(/\$|,/g, ''));
+                        } else if (text.includes('%')) {
+                            target = parseInt(text);
+                        } else {
+                            target = parseInt(text);
+                        }
+
+                        animateCounter(counterNumber, target);
+                        counterNumber.dataset.animated = 'true';
+                    }
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.counter-box').forEach(el => {
+            counterObserver.observe(el);
+        });
+
+        // Stagger portfolio rows on scroll
+        const portfolioObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const rows = entry.target.querySelectorAll('tbody tr');
+                    rows.forEach((row, index) => {
+                        row.style.animationDelay = `${index * 0.05}s`;
+                    });
+                    portfolioObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const portfolioTable = document.querySelector('.portfolio-wrapper');
+        if (portfolioTable) {
+            portfolioObserver.observe(portfolioTable);
+        }
+
+        // How cards stagger
+        const howObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const cards = entry.target.querySelectorAll('.how-card');
+                    cards.forEach((card, index) => {
+                        setTimeout(() => {
+                            card.classList.add('visible');
+                        }, index * 100);
+                    });
+                    howObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const howGrid = document.querySelector('.how-it-works-grid');
+        if (howGrid) {
+            howObserver.observe(howGrid);
+        }
+    </script>
+</body>
+</html>

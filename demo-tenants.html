@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tenantflow — Tenant Management Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
+
+  .header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .logo { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .logo span { color: #3b82f6; }
+  .demo-badge { background: linear-gradient(90deg, #3b82f6, #8b5cf6); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.5px; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; }
+
+  .hero { text-align: center; padding: 64px 32px 40px; }
+  .feature-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; color: #fff; line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px; }
+  .hero h1 em { color: #10b981; font-style: normal; }
+  .hero p { color: #94a3b8; font-size: 18px; max-width: 580px; margin: 0 auto 40px; line-height: 1.6; }
+
+  .demo-wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #10b981, #3b82f6, #8b5cf6); opacity: 0.3; }
+
+  .step { display: flex; gap: 20px; margin-bottom: 12px; opacity: 0; transform: translateY(24px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .step.visible { opacity: 1; transform: translateY(0); }
+
+  .step-icon { width: 58px; height: 58px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; position: relative; z-index: 1; border: 2px solid rgba(255,255,255,0.1); }
+  .step-icon.green { background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); }
+  .step-icon.blue { background: rgba(59,130,246,0.2); border-color: rgba(59,130,246,0.4); }
+  .step-icon.purple { background: rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.4); }
+  .step-icon.amber { background: rgba(245,158,11,0.2); border-color: rgba(245,158,11,0.4); }
+  .step-icon.teal { background: rgba(20,184,166,0.2); border-color: rgba(20,184,166,0.4); }
+
+  .step-content { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px 24px; margin-bottom: 8px; }
+  .step-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .step-num { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 1px; text-transform: uppercase; }
+  .step-time { font-size: 11px; color: #475569; margin-left: auto; }
+  .badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
+  .badge-new { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .badge-ai { background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
+  .badge-qld { background: rgba(20,184,166,0.2); color: #5eead4; border: 1px solid rgba(20,184,166,0.3); }
+  .badge-done { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-warn { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+
+  .step-title { font-size: 17px; font-weight: 700; color: #f1f5f9; margin-bottom: 6px; }
+  .step-desc { font-size: 14px; color: #94a3b8; line-height: 1.6; }
+
+  /* Application card */
+  .applicant-card { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); border-radius: 12px; padding: 16px; margin-top: 14px; display: flex; gap: 14px; align-items: flex-start; }
+  .applicant-avatar { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #10b981); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .applicant-name { font-size: 15px; font-weight: 700; color: #f1f5f9; }
+  .applicant-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .applicant-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .app-tag { font-size: 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 3px 9px; border-radius: 6px; }
+
+  /* AI score card */
+  .score-card { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25); border-radius: 12px; padding: 16px; margin-top: 14px; }
+  .score-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .score-label { font-size: 11px; font-weight: 700; color: #a78bfa; letter-spacing: 0.5px; text-transform: uppercase; }
+  .score-badge { font-size: 20px; font-weight: 900; color: #10b981; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); padding: 6px 14px; border-radius: 10px; }
+  .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .score-metric { font-size: 13px; color: #94a3b8; flex: 1; }
+  .score-bar-wrap { width: 120px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #10b981, #3b82f6); }
+  .score-val { font-size: 12px; font-weight: 700; color: #e2e8f0; width: 30px; text-align: right; }
+  .score-note { font-size: 12px; color: #a78bfa; background: rgba(139,92,246,0.1); border-radius: 8px; padding: 8px 12px; margin-top: 10px; border: 1px solid rgba(139,92,246,0.2); }
+
+  /* Lease preview */
+  .lease-doc { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin-top: 14px; }
+  .doc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .doc-icon { font-size: 28px; }
+  .doc-title { font-size: 14px; font-weight: 700; color: #f1f5f9; }
+  .doc-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .doc-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .doc-field { font-size: 12px; }
+  .doc-field label { color: #64748b; display: block; margin-bottom: 2px; }
+  .doc-field span { color: #e2e8f0; font-weight: 500; }
+  .doc-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #6ee7b7; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); padding: 6px 12px; border-radius: 8px; margin-top: 12px; }
+
+  /* Checklist */
+  .checklist { margin-top: 14px; }
+  .check-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; margin-bottom: 6px; }
+  .check-item.done { border-color: rgba(16,185,129,0.2); background: rgba(16,185,129,0.06); }
+  .check-tick { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+  .check-tick.done { background: #10b981; border-color: #10b981; color: #fff; }
+  .check-text { font-size: 13px; color: #94a3b8; }
+  .check-text.done { color: #e2e8f0; }
+  .check-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px; margin-left: auto; }
+  .check-tag.qld { background: rgba(20,184,166,0.2); color: #5eead4; border: 1px solid rgba(20,184,166,0.3); }
+  .check-tag.auto { background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
+
+  /* Portal card */
+  .portal-preview { background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(139,92,246,0.1) 100%); border: 1px solid rgba(59,130,246,0.2); border-radius: 12px; padding: 16px; margin-top: 14px; }
+  .portal-header { font-size: 12px; font-weight: 700; color: #60a5fa; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .portal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .portal-tile { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; text-align: center; }
+  .portal-tile .icon { font-size: 22px; margin-bottom: 6px; }
+  .portal-tile .label { font-size: 11px; color: #94a3b8; font-weight: 500; }
+
+  .result-card { background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(59,130,246,0.1) 100%); border: 1px solid rgba(16,185,129,0.3); border-radius: 20px; padding: 32px; text-align: center; margin-top: 48px; opacity: 0; transform: translateY(24px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  .result-card.visible { opacity: 1; transform: translateY(0); }
+  .result-icon { font-size: 48px; margin-bottom: 16px; }
+  .result-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .result-sub { font-size: 15px; color: #94a3b8; max-width: 480px; margin: 0 auto 24px; line-height: 1.6; }
+  .result-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 16px; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 28px; font-weight: 800; color: #10b981; }
+  .stat-label { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+  .cta-bar { text-align: center; padding: 48px 24px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-top: 1px solid rgba(255,255,255,0.06); }
+  .cta-bar h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .cta-bar p { color: #64748b; font-size: 15px; margin-bottom: 24px; }
+  .cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; }
+  .btn-secondary { background: rgba(255,255,255,0.08); color: #e2e8f0; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 15px; border: 1px solid rgba(255,255,255,0.12); }
+
+  .other-demos { background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.06); padding: 24px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .demo-chip { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .demo-chip:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .demo-chip.active { background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); color: #34d399; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Tenant<span>flow</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="app.html">Try Live Demo</a>
+  </div>
+  <div class="demo-badge">FEATURE DEMO</div>
+</div>
+
+<div class="other-demos">
+  <a class="demo-chip" href="demo-maintenance.html">🔧 Maintenance Requests</a>
+  <a class="demo-chip active" href="demo-tenants.html">👥 Tenant Management</a>
+  <a class="demo-chip" href="demo-compliance.html">✅ QLD Compliance</a>
+  <a class="demo-chip" href="demo.html">🎬 Full Product Tour</a>
+</div>
+
+<div class="hero">
+  <div class="feature-tag">👥 Feature Demo</div>
+  <h1>Tenant onboarding,<br><em>done in minutes.</em></h1>
+  <p>From application to signed lease — Tenantflow screens applicants with AI, prepares QLD Form 18a automatically, and sets up the tenant portal before you've finished your coffee.</p>
+</div>
+
+<div class="demo-wrap">
+<div class="timeline">
+
+  <!-- STEP 1 -->
+  <div class="step" id="s1">
+    <div class="step-icon green">📋</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 01</span>
+        <span class="badge badge-new">New Application</span>
+        <span class="step-time">Fri 10:23am</span>
+      </div>
+      <div class="step-title">Rental application received</div>
+      <div class="step-desc">Marcus submits an application online for the 3-bed at Nundah. All documents are uploaded through the tenant portal — no paper, no fax.</div>
+      <div class="applicant-card">
+        <div class="applicant-avatar">MR</div>
+        <div>
+          <div class="applicant-name">Marcus Rivera</div>
+          <div class="applicant-sub">Applied for: 8 Albion Rd, Nundah QLD 4012 · $620/wk</div>
+          <div class="applicant-tags">
+            <span class="app-tag">📄 ID verified</span>
+            <span class="app-tag">💼 Employed full-time</span>
+            <span class="app-tag">🏠 3 years rental history</span>
+            <span class="app-tag">👤 Single applicant</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="s2">
+    <div class="step-icon purple">🤖</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 02</span>
+        <span class="badge badge-ai">AI Screening</span>
+        <span class="step-time">10:23am · instant</span>
+      </div>
+      <div class="step-title">AI screens the application in seconds</div>
+      <div class="step-desc">Tenantflow analyses income-to-rent ratio, rental history, references, and ID documents — and gives you a recommendation you can act on immediately.</div>
+      <div class="score-card">
+        <div class="score-header">
+          <div class="score-label">⚡ AI Applicant Score</div>
+          <div class="score-badge">92 / 100</div>
+        </div>
+        <div class="score-row">
+          <div class="score-metric">Income to rent ratio</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:96%"></div></div>
+          <div class="score-val">96</div>
+        </div>
+        <div class="score-row">
+          <div class="score-metric">Rental history</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:90%"></div></div>
+          <div class="score-val">90</div>
+        </div>
+        <div class="score-row">
+          <div class="score-metric">Reference quality</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:88%"></div></div>
+          <div class="score-val">88</div>
+        </div>
+        <div class="score-row">
+          <div class="score-metric">ID verification</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:100%"></div></div>
+          <div class="score-val">100</div>
+        </div>
+        <div class="score-note">✅ Recommendation: <strong>Approve.</strong> Income is 4.8× weekly rent. Previous PM confirmed on-time payments for 3 years. No prior tribunal history detected.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="s3">
+    <div class="step-icon teal">📝</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 03</span>
+        <span class="badge badge-qld">QLD Form 18a</span>
+        <span class="step-time">10:31am · 1 click</span>
+      </div>
+      <div class="step-title">Tenancy agreement prepared automatically</div>
+      <div class="step-desc">You approve Marcus. Tenantflow generates the correct Queensland Residential Tenancy Agreement (Form 18a) pre-filled with all property and tenant details.</div>
+      <div class="lease-doc">
+        <div class="doc-header">
+          <div class="doc-icon">📄</div>
+          <div>
+            <div class="doc-title">Residential Tenancy Agreement — Form 18a</div>
+            <div class="doc-sub">Queensland Residential Tenancies and Rooming Accommodation Act 2008</div>
+          </div>
+        </div>
+        <div class="doc-fields">
+          <div class="doc-field"><label>Tenant</label><span>Marcus Rivera</span></div>
+          <div class="doc-field"><label>Property</label><span>8 Albion Rd, Nundah QLD 4012</span></div>
+          <div class="doc-field"><label>Weekly Rent</label><span>$620.00</span></div>
+          <div class="doc-field"><label>Bond Amount</label><span>$2,480.00 (4 weeks)</span></div>
+          <div class="doc-field"><label>Lease Start</label><span>1 August 2026</span></div>
+          <div class="doc-field"><label>Term</label><span>12 months fixed</span></div>
+          <div class="doc-field"><label>Pay Day</label><span>Friday (weekly)</span></div>
+          <div class="doc-field"><label>Entry Condition</label><span>Auto-generated</span></div>
+        </div>
+        <div class="doc-status">✅ Sent to Marcus for e-signature via DocuSign · Awaiting signature</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" id="s4">
+    <div class="step-icon amber">🏦</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 04</span>
+        <span class="badge badge-qld">RTA Bond</span>
+        <span class="step-time">Fri 2:15pm</span>
+      </div>
+      <div class="step-title">Bond lodged with the RTA automatically</div>
+      <div class="step-desc">Once the lease is signed and bond paid, Tenantflow lodges the bond directly with the Residential Tenancies Authority — no separate form or manual process needed.</div>
+      <div class="checklist">
+        <div class="check-item done">
+          <div class="check-tick done">✓</div>
+          <div class="check-text done">Bond of $2,480 received from Marcus</div>
+          <span class="check-tag qld">QLD</span>
+        </div>
+        <div class="check-item done">
+          <div class="check-tick done">✓</div>
+          <div class="check-text done">RTA Form 2 lodgement submitted online</div>
+          <span class="check-tag auto">Auto</span>
+        </div>
+        <div class="check-item done">
+          <div class="check-tick done">✓</div>
+          <div class="check-text done">Bond receipt issued to Marcus (required by law)</div>
+          <span class="check-tag qld">QLD</span>
+        </div>
+        <div class="check-item done">
+          <div class="check-tick done">✓</div>
+          <div class="check-text done">RTA lodgement confirmation saved to file</div>
+          <span class="check-tag auto">Auto</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step" id="s5">
+    <div class="step-icon blue">🏠</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 05</span>
+        <span class="badge badge-done">Move-in Ready</span>
+        <span class="step-time">1 Aug · Day 1</span>
+      </div>
+      <div class="step-title">Tenant portal activated. Marcus is ready to go.</div>
+      <div class="step-desc">Marcus receives his tenant portal login with everything he needs — lease docs, emergency contacts, maintenance request link, and payment portal. All set up automatically.</div>
+      <div class="portal-preview">
+        <div class="portal-header">👤 Marcus's Tenant Portal — 8 Albion Rd, Nundah</div>
+        <div class="portal-grid">
+          <div class="portal-tile"><div class="icon">📄</div><div class="label">My Lease & Docs</div></div>
+          <div class="portal-tile"><div class="icon">🔧</div><div class="label">Request Maintenance</div></div>
+          <div class="portal-tile"><div class="icon">💳</div><div class="label">Rent Payments</div></div>
+          <div class="portal-tile"><div class="icon">📞</div><div class="label">Contact My PM</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="result-card" id="result">
+  <div class="result-icon">🎉</div>
+  <div class="result-title">New tenant onboarded. Zero paperwork.</div>
+  <div class="result-sub">From application to move-in — AI screening, compliant QLD lease, RTA bond lodgement, and a tenant portal — all completed automatically while you did something more valuable.</div>
+  <div class="result-stats">
+    <div class="stat"><div class="stat-val">4h</div><div class="stat-label">Application to lease signed</div></div>
+    <div class="stat"><div class="stat-val">0</div><div class="stat-label">Forms filled manually</div></div>
+    <div class="stat"><div class="stat-val">100%</div><div class="stat-label">RTA compliant from day 1</div></div>
+  </div>
+</div>
+
+</div>
+
+<div class="cta-bar">
+  <h2>Ready to onboard tenants the modern way?</h2>
+  <p>Join Queensland property managers already on the early access list.</p>
+  <div class="cta-btns">
+    <a href="app.html" class="btn-primary">▶ Try the live demo</a>
+    <a href="index.html#early-access" class="btn-secondary">Get early access</a>
+  </div>
+</div>
+
+<script>
+const steps = ['s1','s2','s3','s4','s5'];
+let current = 0;
+const delays = [300, 1200, 2600, 4200, 6000];
+
+function showNext() {
+  if (current < steps.length) {
+    document.getElementById(steps[current]).classList.add('visible');
+    current++;
+    if (current < steps.length) setTimeout(showNext, delays[current] - delays[current-1]);
+    else setTimeout(() => document.getElementById('result').classList.add('visible'), 1200);
+  }
+}
+window.addEventListener('load', () => setTimeout(showNext, 400));
+</script>
+</body>
+</html>

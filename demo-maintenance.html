@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tenantflow — Maintenance Requests Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .logo { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .logo span { color: #3b82f6; }
+  .demo-badge { background: linear-gradient(90deg, #3b82f6, #8b5cf6); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.5px; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; }
+  .nav-links a:hover { color: #fff; }
+
+  /* HERO */
+  .hero { text-align: center; padding: 64px 32px 40px; }
+  .feature-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #60a5fa; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; color: #fff; line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px; }
+  .hero h1 em { color: #3b82f6; font-style: normal; }
+  .hero p { color: #94a3b8; font-size: 18px; max-width: 580px; margin: 0 auto 40px; line-height: 1.6; }
+
+  /* DEMO CONTAINER */
+  .demo-wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* TIMELINE */
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #3b82f6, #8b5cf6, #10b981); opacity: 0.3; }
+
+  .step { display: flex; gap: 20px; margin-bottom: 12px; opacity: 0; transform: translateY(24px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .step.visible { opacity: 1; transform: translateY(0); }
+
+  .step-icon { width: 58px; height: 58px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; position: relative; z-index: 1; border: 2px solid rgba(255,255,255,0.1); }
+  .step-icon.blue { background: rgba(59,130,246,0.2); border-color: rgba(59,130,246,0.4); }
+  .step-icon.red { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.4); }
+  .step-icon.purple { background: rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.4); }
+  .step-icon.amber { background: rgba(245,158,11,0.2); border-color: rgba(245,158,11,0.4); }
+  .step-icon.green { background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); }
+  .step-icon.teal { background: rgba(20,184,166,0.2); border-color: rgba(20,184,166,0.4); }
+
+  .step-content { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px 24px; margin-bottom: 8px; }
+  .step-content:hover { border-color: rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); transition: all 0.2s; }
+
+  .step-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .step-num { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 1px; text-transform: uppercase; }
+  .step-time { font-size: 11px; color: #475569; margin-left: auto; }
+  .badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
+  .badge-urgent { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .badge-ai { background: rgba(139,92,246,0.2); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
+  .badge-qld { background: rgba(20,184,166,0.2); color: #5eead4; border: 1px solid rgba(20,184,166,0.3); }
+  .badge-done { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-owner { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+
+  .step-title { font-size: 17px; font-weight: 700; color: #f1f5f9; margin-bottom: 6px; }
+  .step-desc { font-size: 14px; color: #94a3b8; line-height: 1.6; }
+
+  /* CARDS INSIDE STEPS */
+  .msg-bubble { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); border-radius: 12px; padding: 14px 16px; margin-top: 14px; }
+  .msg-bubble.sms { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.2); }
+  .msg-bubble.email { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.2); }
+  .msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .msg-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .msg-from { font-size: 12px; font-weight: 600; color: #e2e8f0; }
+  .msg-when { font-size: 11px; color: #64748b; margin-left: auto; }
+  .msg-text { font-size: 13px; color: #94a3b8; line-height: 1.5; }
+  .msg-text strong { color: #e2e8f0; }
+
+  .ai-analysis { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25); border-radius: 12px; padding: 14px 16px; margin-top: 14px; }
+  .ai-label { font-size: 11px; font-weight: 700; color: #a78bfa; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .ai-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .ai-tag { font-size: 12px; background: rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.3); color: #c4b5fd; padding: 4px 10px; border-radius: 8px; }
+  .ai-law { font-size: 12px; color: #a78bfa; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2); border-radius: 8px; padding: 8px 12px; margin-top: 6px; }
+  .ai-law strong { color: #c4b5fd; }
+
+  .owner-email { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 12px; padding: 14px 16px; margin-top: 14px; }
+  .email-field { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+  .email-field span { color: #e2e8f0; }
+  .email-body { font-size: 13px; color: #94a3b8; line-height: 1.6; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); }
+
+  .approval-row { display: flex; gap: 10px; margin-top: 14px; }
+  .btn-approve { background: #10b981; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: default; }
+  .btn-deny { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: default; }
+  .approved-stamp { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 700; color: #6ee7b7; display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; }
+
+  .timeline-track { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; margin-top: 14px; }
+  .track-title { font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 12px; }
+  .track-step { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .track-step:last-child { border-bottom: none; }
+  .track-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .track-dot.done { background: #10b981; }
+  .track-dot.active { background: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.6); }
+  .track-dot.pending { background: #334155; }
+  .track-label { font-size: 13px; color: #94a3b8; flex: 1; }
+  .track-label.done { color: #e2e8f0; }
+  .track-time { font-size: 11px; color: #475569; }
+
+  /* FINAL RESULT */
+  .result-card { background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(59,130,246,0.1) 100%); border: 1px solid rgba(16,185,129,0.3); border-radius: 20px; padding: 32px; text-align: center; margin-top: 48px; opacity: 0; transform: translateY(24px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  .result-card.visible { opacity: 1; transform: translateY(0); }
+  .result-icon { font-size: 48px; margin-bottom: 16px; }
+  .result-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .result-sub { font-size: 15px; color: #94a3b8; max-width: 480px; margin: 0 auto 24px; line-height: 1.6; }
+  .result-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 16px; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 28px; font-weight: 800; color: #10b981; }
+  .stat-label { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+  /* CTA */
+  .cta-bar { text-align: center; padding: 48px 24px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-top: 1px solid rgba(255,255,255,0.06); }
+  .cta-bar h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .cta-bar p { color: #64748b; font-size: 15px; margin-bottom: 24px; }
+  .cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; }
+  .btn-secondary { background: rgba(255,255,255,0.08); color: #e2e8f0; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 15px; border: 1px solid rgba(255,255,255,0.12); }
+
+  /* OTHER DEMOS BAR */
+  .other-demos { background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.06); padding: 24px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .demo-chip { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .demo-chip:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .demo-chip.active { background: rgba(59,130,246,0.2); border-color: rgba(59,130,246,0.4); color: #60a5fa; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">Tenant<span>flow</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="app.html">Try Live Demo</a>
+  </div>
+  <div class="demo-badge">FEATURE DEMO</div>
+</div>
+
+<!-- OTHER DEMOS BAR -->
+<div class="other-demos">
+  <a class="demo-chip active" href="demo-maintenance.html">🔧 Maintenance Requests</a>
+  <a class="demo-chip" href="demo-tenants.html">👥 Tenant Management</a>
+  <a class="demo-chip" href="demo-compliance.html">✅ QLD Compliance</a>
+  <a class="demo-chip" href="demo.html">🎬 Full Product Tour</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="feature-tag">🔧 Feature Demo</div>
+  <h1>Maintenance Requests,<br><em>handled end-to-end.</em></h1>
+  <p>From tenant report to completed job — Tenantflow automates the whole workflow including QLD urgent repair obligations, owner approvals, and contractor coordination.</p>
+</div>
+
+<!-- DEMO TIMELINE -->
+<div class="demo-wrap">
+<div class="timeline">
+
+  <!-- STEP 1 -->
+  <div class="step" id="s1">
+    <div class="step-icon blue">📱</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 01</span>
+        <span class="badge badge-urgent">Urgent Repair</span>
+        <span class="step-time">Mon 7:42am</span>
+      </div>
+      <div class="step-title">Tenant submits a maintenance request</div>
+      <div class="step-desc">Sarah texts the property portal. No apps to install — just a simple web link sent with the lease.</div>
+      <div class="msg-bubble sms">
+        <div class="msg-header">
+          <div class="msg-avatar">ST</div>
+          <div class="msg-from">Sarah Thompson · 14 Bellbird St, Stafford QLD</div>
+          <div class="msg-when">7:42am</div>
+        </div>
+        <div class="msg-text">Hi, our <strong>hot water system isn't working</strong>. It's been 2 days now and we have 3 kids. Can someone please fix it urgently? We've tried resetting it. Unit 2.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="s2">
+    <div class="step-icon purple">🤖</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 02</span>
+        <span class="badge badge-ai">AI Analysis</span>
+        <span class="step-time">7:42am · instant</span>
+      </div>
+      <div class="step-title">AI classifies the request and flags QLD law</div>
+      <div class="step-desc">Tenantflow reads the message, identifies the issue type, urgency level, and applicable Queensland legislation automatically.</div>
+      <div class="ai-analysis">
+        <div class="ai-label">⚡ Tenantflow AI Analysis</div>
+        <div class="ai-row">
+          <span class="ai-tag">🔥 Hot Water System</span>
+          <span class="ai-tag">🔴 URGENT REPAIR</span>
+          <span class="ai-tag">🏠 Unit 2</span>
+          <span class="ai-tag">👨‍👩‍👧‍👦 3 children</span>
+        </div>
+        <div class="ai-law">
+          <strong>⚖️ RTRA Act 2008 — Section 185(2)(g)</strong><br>
+          Hot water is a listed urgent repair under Queensland law. Owner must authorise or arrange repair within <strong>24 hours</strong>. Tenant may arrange independently up to $300 if owner is uncontactable.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="s3">
+    <div class="step-icon amber">📧</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 03</span>
+        <span class="badge badge-owner">Owner Notified</span>
+        <span class="step-time">7:43am · auto-drafted</span>
+      </div>
+      <div class="step-title">Owner notification drafted and sent</div>
+      <div class="step-desc">A professional email goes to the property owner within 60 seconds, including a cost estimate and clear action options.</div>
+      <div class="owner-email">
+        <div class="email-field">To: <span>David Chen &lt;dchen@email.com&gt;</span></div>
+        <div class="email-field">Subject: <span>⚠️ Urgent Repair Required — 14 Bellbird St, Stafford</span></div>
+        <div class="email-body">
+          Hi David, your tenant at Unit 2, 14 Bellbird St has reported a <strong>failed hot water system</strong> affecting a family with 3 children. Under the Queensland RTRA Act s.185, this is classified as an urgent repair requiring attention within 24 hours.<br><br>
+          <strong>Estimated cost:</strong> $350 – $480 (hot water element replacement, licensed plumber)<br><br>
+          Please reply with your preference below.
+        </div>
+        <div class="approval-row">
+          <button class="btn-approve">✓ Approve & Book Plumber</button>
+          <button class="btn-deny">Request Quote First</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" id="s4">
+    <div class="step-icon green">✅</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 04</span>
+        <span class="badge badge-done">Approved</span>
+        <span class="step-time">8:15am · owner reply</span>
+      </div>
+      <div class="step-title">Owner approves. Contractor booked automatically.</div>
+      <div class="step-desc">David replies "approve" from his phone. Tenantflow instantly books the next available trusted plumber from your preferred contractor list.</div>
+      <div class="approved-stamp">✓ Owner approved via email — Jim's Plumbing (preferred) booked for today 11am–1pm</div>
+      <div class="msg-bubble" style="margin-top:12px;">
+        <div class="msg-header">
+          <div class="msg-avatar" style="background:linear-gradient(135deg,#10b981,#3b82f6);">JB</div>
+          <div class="msg-from">SMS to Sarah Thompson</div>
+          <div class="msg-when">8:16am</div>
+        </div>
+        <div class="msg-text">Hi Sarah, great news — a plumber is booked for <strong>today between 11am and 1pm</strong>. Jim's Plumbing will call you 30 mins before arrival. No action needed from you. — VA Realty</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step" id="s5">
+    <div class="step-icon teal">🔧</div>
+    <div class="step-content">
+      <div class="step-meta">
+        <span class="step-num">Step 05</span>
+        <span class="badge badge-done">Job Complete</span>
+        <span class="step-time">12:45pm · same day</span>
+      </div>
+      <div class="step-title">Repair completed. Invoice filed. Owner updated.</div>
+      <div class="step-desc">Jim's Plumbing marks the job done in the portal. Invoice is automatically attached to the property record and emailed to the owner for reimbursement.</div>
+      <div class="timeline-track">
+        <div class="track-title">JOB TIMELINE — 14 Bellbird St, Unit 2</div>
+        <div class="track-step">
+          <div class="track-dot done"></div>
+          <div class="track-label done">Tenant reported hot water fault</div>
+          <div class="track-time">Mon 7:42am</div>
+        </div>
+        <div class="track-step">
+          <div class="track-dot done"></div>
+          <div class="track-label done">AI classified as RTRA urgent repair</div>
+          <div class="track-time">Mon 7:42am</div>
+        </div>
+        <div class="track-step">
+          <div class="track-dot done"></div>
+          <div class="track-label done">Owner notified with cost estimate</div>
+          <div class="track-time">Mon 7:43am</div>
+        </div>
+        <div class="track-step">
+          <div class="track-dot done"></div>
+          <div class="track-label done">Owner approved &amp; plumber booked</div>
+          <div class="track-time">Mon 8:15am</div>
+        </div>
+        <div class="track-step">
+          <div class="track-dot done"></div>
+          <div class="track-label done">Tenant notified of booking</div>
+          <div class="track-time">Mon 8:16am</div>
+        </div>
+        <div class="track-step">
+          <div class="track-dot done"></div>
+          <div class="track-label done">Hot water element replaced — $412 inc GST</div>
+          <div class="track-time">Mon 12:45pm</div>
+        </div>
+        <div class="track-step">
+          <div class="track-dot active"></div>
+          <div class="track-label done">Invoice filed, owner reimbursement email sent</div>
+          <div class="track-time">Mon 12:46pm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /timeline -->
+
+<!-- RESULT CARD -->
+<div class="result-card" id="result">
+  <div class="result-icon">⚡</div>
+  <div class="result-title">From report to fix in under 5 hours.</div>
+  <div class="result-sub">No phone tag. No manual emails. No compliance risk. Tenantflow handled the entire workflow — including the QLD legal obligation — while you focused on other things.</div>
+  <div class="result-stats">
+    <div class="stat"><div class="stat-val">4h 63m</div><div class="stat-label">Total resolution time</div></div>
+    <div class="stat"><div class="stat-val">0</div><div class="stat-label">Manual PM actions needed</div></div>
+    <div class="stat"><div class="stat-val">100%</div><div class="stat-label">RTRA compliance maintained</div></div>
+  </div>
+</div>
+
+</div><!-- /demo-wrap -->
+
+<!-- CTA -->
+<div class="cta-bar">
+  <h2>Ready to automate your maintenance workflow?</h2>
+  <p>Join Queensland property managers already on the early access list.</p>
+  <div class="cta-btns">
+    <a href="app.html" class="btn-primary">▶ Try the live demo</a>
+    <a href="index.html#early-access" class="btn-secondary">Get early access</a>
+  </div>
+</div>
+
+<script>
+const steps = ['s1','s2','s3','s4','s5'];
+let current = 0;
+const delays = [300, 1200, 2400, 3800, 5400];
+
+function showNext() {
+  if (current < steps.length) {
+    const el = document.getElementById(steps[current]);
+    if (el) el.classList.add('visible');
+    current++;
+    if (current < steps.length) {
+      setTimeout(showNext, delays[current] - delays[current-1]);
+    } else {
+      setTimeout(() => document.getElementById('result').classList.add('visible'), 1200);
+    }
+  }
+}
+
+// Start animation when page loads
+window.addEventListener('load', () => setTimeout(showNext, 400));
+
+// Also use intersection observer for restart on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.target.id === 's1' && !e.target.classList.contains('visible')) {
+      setTimeout(showNext, 200);
+    }
+  });
+}, { threshold: 0.3 });
+const s1 = document.getElementById('s1');
+if (s1) observer.observe(s1);
+</script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tenantflow — QLD Compliance Dashboard Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
+
+  .header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .logo { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .logo span { color: #3b82f6; }
+  .demo-badge { background: linear-gradient(90deg, #3b82f6, #8b5cf6); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.5px; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; }
+
+  .hero { text-align: center; padding: 64px 32px 40px; }
+  .feature-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(20,184,166,0.15); border: 1px solid rgba(20,184,166,0.3); color: #5eead4; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; color: #fff; line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px; }
+  .hero h1 em { color: #14b8a6; font-style: normal; }
+  .hero p { color: #94a3b8; font-size: 18px; max-width: 580px; margin: 0 auto 40px; line-height: 1.6; }
+
+  .demo-wrap { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* COMPLIANCE DASHBOARD */
+  .dashboard { opacity: 0; transform: translateY(20px); transition: all 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .dashboard.visible { opacity: 1; transform: translateY(0); }
+
+  .dash-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .dash-title { font-size: 20px; font-weight: 800; color: #fff; }
+  .dash-sub { font-size: 13px; color: #64748b; margin-top: 2px; }
+  .dash-stats { display: flex; gap: 12px; }
+  .dash-stat { text-align: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 20px; }
+  .dash-stat .val { font-size: 22px; font-weight: 800; }
+  .dash-stat .val.green { color: #10b981; }
+  .dash-stat .val.amber { color: #f59e0b; }
+  .dash-stat .val.red { color: #ef4444; }
+  .dash-stat .lbl { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  /* PROPERTY ROWS */
+  .prop-section { margin-bottom: 32px; }
+  .prop-section-title { font-size: 13px; font-weight: 700; color: #64748b; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+  .prop-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr; gap: 4px; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 14px 16px; margin-bottom: 6px; opacity: 0; transform: translateX(-12px); transition: all 0.4s cubic-bezier(0.16,1,0.3,1); }
+  .prop-row.visible { opacity: 1; transform: translateX(0); }
+  .prop-row:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); transition: all 0.15s; }
+
+  .prop-address { font-size: 13px; font-weight: 600; color: #f1f5f9; }
+  .prop-tenant { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  .col-head { font-size: 10px; font-weight: 700; color: #475569; letter-spacing: 0.5px; text-transform: uppercase; text-align: center; }
+  .header-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr; gap: 4px; margin-bottom: 8px; padding: 0 16px; }
+
+  .status-pill { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 8px; letter-spacing: 0.3px; white-space: nowrap; }
+  .status-pill.ok { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+  .status-pill.warn { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+  .status-pill.due { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+  .status-pill.na { background: rgba(255,255,255,0.05); color: #475569; border: 1px solid rgba(255,255,255,0.08); }
+
+  /* DETAIL PANEL */
+  .detail-panel { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: 16px; padding: 20px 24px; margin: 16px 0 24px; opacity: 0; transform: translateY(12px); transition: all 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .detail-panel.visible { opacity: 1; transform: translateY(0); }
+  .detail-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .detail-icon { font-size: 20px; }
+  .detail-title { font-size: 15px; font-weight: 700; color: #fca5a5; }
+  .detail-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .action-items { display: flex; flex-direction: column; gap: 8px; }
+  .action-item { display: flex; align-items: flex-start; gap: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 12px 14px; }
+  .action-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .action-text { font-size: 13px; color: #94a3b8; line-height: 1.5; }
+  .action-text strong { color: #f1f5f9; }
+  .action-law { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* AI ALERT */
+  .ai-alert { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25); border-radius: 16px; padding: 20px 24px; margin: 24px 0; opacity: 0; transform: translateY(12px); transition: all 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .ai-alert.visible { opacity: 1; transform: translateY(0); }
+  .ai-alert-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .ai-alert-title { font-size: 14px; font-weight: 700; color: #c4b5fd; }
+  .alert-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .alert-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; }
+  .alert-card .a-icon { font-size: 22px; margin-bottom: 8px; }
+  .alert-card .a-title { font-size: 12px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  .alert-card .a-text { font-size: 11px; color: #64748b; line-height: 1.5; }
+  .alert-card .a-due { font-size: 11px; font-weight: 700; margin-top: 8px; }
+  .alert-card .a-due.red { color: #f87171; }
+  .alert-card .a-due.amber { color: #fbbf24; }
+  .alert-card .a-due.green { color: #34d399; }
+
+  /* SUMMARY */
+  .summary-section { opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16,1,0.3,1); margin-top: 32px; }
+  .summary-section.visible { opacity: 1; transform: translateY(0); }
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .summary-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; }
+  .summary-card .s-label { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .summary-card .s-val { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .summary-card .s-sub { font-size: 12px; color: #64748b; }
+  .summary-card.good { border-color: rgba(16,185,129,0.25); background: rgba(16,185,129,0.06); }
+  .summary-card.good .s-val { color: #10b981; }
+  .summary-card.warn { border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.06); }
+  .summary-card.warn .s-val { color: #f59e0b; }
+  .summary-card.info { border-color: rgba(59,130,246,0.25); background: rgba(59,130,246,0.06); }
+  .summary-card.info .s-val { color: #3b82f6; }
+
+  .result-card { background: linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(59,130,246,0.1) 100%); border: 1px solid rgba(20,184,166,0.3); border-radius: 20px; padding: 32px; text-align: center; margin-top: 32px; }
+  .result-icon { font-size: 48px; margin-bottom: 16px; }
+  .result-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .result-sub { font-size: 15px; color: #94a3b8; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+  .cta-bar { text-align: center; padding: 48px 24px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-top: 1px solid rgba(255,255,255,0.06); }
+  .cta-bar h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .cta-bar p { color: #64748b; font-size: 15px; margin-bottom: 24px; }
+  .cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 700; font-size: 15px; }
+  .btn-secondary { background: rgba(255,255,255,0.08); color: #e2e8f0; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 15px; border: 1px solid rgba(255,255,255,0.12); }
+
+  .other-demos { background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.06); padding: 24px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .demo-chip { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; text-decoration: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+  .demo-chip:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .demo-chip.active { background: rgba(20,184,166,0.2); border-color: rgba(20,184,166,0.4); color: #5eead4; }
+
+  @media (max-width: 700px) {
+    .prop-row, .header-row { grid-template-columns: 2fr 1fr 1fr; }
+    .prop-row > *:nth-child(n+5), .header-row > *:nth-child(n+5) { display: none; }
+    .alert-cards, .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Tenant<span>flow</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="app.html">Try Live Demo</a>
+  </div>
+  <div class="demo-badge">FEATURE DEMO</div>
+</div>
+
+<div class="other-demos">
+  <a class="demo-chip" href="demo-maintenance.html">🔧 Maintenance Requests</a>
+  <a class="demo-chip" href="demo-tenants.html">👥 Tenant Management</a>
+  <a class="demo-chip active" href="demo-compliance.html">✅ QLD Compliance</a>
+  <a class="demo-chip" href="demo.html">🎬 Full Product Tour</a>
+</div>
+
+<div class="hero">
+  <div class="feature-tag">✅ Feature Demo</div>
+  <h1>QLD Compliance,<br><em>always under control.</em></h1>
+  <p>Every property. Every obligation. Smoke alarms, safety switches, bond lodgement, rent increases, entry notices — Tenantflow tracks it all and alerts you before things go wrong.</p>
+</div>
+
+<div class="demo-wrap">
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dash">
+    <div class="dash-header">
+      <div>
+        <div class="dash-title">Compliance Dashboard</div>
+        <div class="dash-sub">VA Realty · 14 managed properties · QLD</div>
+      </div>
+      <div class="dash-stats">
+        <div class="dash-stat"><div class="val green">11</div><div class="lbl">Compliant</div></div>
+        <div class="dash-stat"><div class="val amber">2</div><div class="lbl">Due Soon</div></div>
+        <div class="dash-stat"><div class="val red">1</div><div class="lbl">Action Required</div></div>
+      </div>
+    </div>
+
+    <!-- TABLE HEADER -->
+    <div class="header-row">
+      <div class="col-head">Property</div>
+      <div class="col-head">Smoke Alarms</div>
+      <div class="col-head">Safety Switch</div>
+      <div class="col-head">Bond</div>
+      <div class="col-head">Entry Notice</div>
+      <div class="col-head">Rent Review</div>
+      <div class="col-head">Lease</div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-section-title">🔴 Requires Immediate Action</div>
+
+      <div class="prop-row" id="p1">
+        <div>
+          <div class="prop-address">8 Albion Rd, Nundah</div>
+          <div class="prop-tenant">Marcus Rivera · $620/wk</div>
+        </div>
+        <div class="status-pill due">⚠ Overdue</div>
+        <div class="status-pill ok">✓ OK</div>
+        <div class="status-pill ok">✓ Lodged</div>
+        <div class="status-pill ok">✓ OK</div>
+        <div class="status-pill ok">✓ 8mo</div>
+        <div class="status-pill ok">✓ Current</div>
+      </div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-section-title">🟡 Due Within 30 Days</div>
+
+      <div class="prop-row" id="p2">
+        <div>
+          <div class="prop-address">14 Bellbird St, Stafford</div>
+          <div class="prop-tenant">Sarah Thompson · $490/wk</div>
+        </div>
+        <div class="status-pill ok">✓ Current</div>
+        <div class="status-pill ok">✓ OK</div>
+        <div class="status-pill ok">✓ Lodged</div>
+        <div class="status-pill ok">✓ OK</div>
+        <div class="status-pill warn">⚡ 28 days</div>
+        <div class="status-pill ok">✓ Current</div>
+      </div>
+
+      <div class="prop-row" id="p3">
+        <div>
+          <div class="prop-address">22 Grange Rd, Wilston</div>
+          <div class="prop-tenant">Joel & Aimee Park · $780/wk</div>
+        </div>
+        <div class="status-pill ok">✓ Current</div>
+        <div class="status-pill ok">✓ OK</div>
+        <div class="status-pill ok">✓ Lodged</div>
+        <div class="status-pill ok">✓ OK</div>
+        <div class="status-pill ok">✓ 6mo</div>
+        <div class="status-pill warn">⚡ 19 days</div>
+      </div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-section-title">✅ Fully Compliant</div>
+
+      <div class="prop-row" id="p4">
+        <div><div class="prop-address">5 Kingsford St, Lutwyche</div><div class="prop-tenant">Priya Sharma · $540/wk</div></div>
+        <div class="status-pill ok">✓</div><div class="status-pill ok">✓</div><div class="status-pill ok">✓</div><div class="status-pill ok">✓</div><div class="status-pill ok">✓ 4mo</div><div class="status-pill ok">✓</div>
+      </div>
+      <div class="prop-row" id="p5">
+        <div><div class="prop-address">31 Kedron Brook Rd, Wavell Heights</div><div class="prop-tenant">Tom & Lisa Brennan · $650/wk</div></div>
+        <div class="status-pill ok">✓</div><div class="status-pill ok">✓</div><div class="status-pill ok">✓</div><div class="status-pill ok">✓</div><div class="status-pill ok">✓ 5mo</div><div class="status-pill ok">✓</div>
+      </div>
+      <div class="prop-row" id="p6">
+        <div><div class="prop-address">9 Deagon St, Sandgate</div><div class="prop-tenant">Carlos Mendes · $420/wk</div></div>
+        <div class="status-pill ok">✓</div><div class="status-pill ok">✓</div><div class="status-pill ok">✓</div><div class="status-pill na">N/A</div><div class="status-pill ok">✓ 3mo</div><div class="status-pill ok">✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL: ACTION REQUIRED -->
+  <div class="detail-panel" id="detail">
+    <div class="detail-header">
+      <div class="detail-icon">🚨</div>
+      <div>
+        <div class="detail-title">Action Required — 8 Albion Rd, Nundah (Smoke Alarms)</div>
+        <div class="detail-sub">QLD Fire and Emergency Services Act 1990 + Residential Tenancies regulations</div>
+      </div>
+    </div>
+    <div class="action-items">
+      <div class="action-item">
+        <div class="action-num">1</div>
+        <div>
+          <div class="action-text"><strong>Annual smoke alarm inspection overdue by 12 days.</strong> Queensland requires all rental properties to have photoelectric smoke alarms tested and cleaned annually by a licensed inspector.</div>
+          <div class="action-law">⚖️ Smoke Alarms (Domestic) Amendment Regulation 2021 — compliance deadline: before each new tenancy or annually</div>
+        </div>
+      </div>
+      <div class="action-item">
+        <div class="action-num">2</div>
+        <div>
+          <div class="action-text"><strong>Tenantflow has drafted a booking request</strong> to your preferred smoke alarm service provider (Safe Smoke QLD). Awaiting your approval to send.</div>
+          <div class="action-law">📧 Draft email ready · Estimated cost: $99 inc GST · Next available: tomorrow 9am</div>
+        </div>
+      </div>
+      <div class="action-item">
+        <div class="action-num">3</div>
+        <div>
+          <div class="action-text"><strong>Tenant entry notice prepared.</strong> 24-hour written notice will be auto-sent to Marcus Rivera once you confirm the booking, in compliance with RTRA Act s.192.</div>
+          <div class="action-law">⚖️ RTRA Act 2008 s.192 — minimum 24 hours notice required for routine entry</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI UPCOMING ALERTS -->
+  <div class="ai-alert" id="ai-alert">
+    <div class="ai-alert-header">
+      <span style="font-size:18px">🤖</span>
+      <div class="ai-alert-title">AI — Upcoming compliance events across your portfolio</div>
+    </div>
+    <div class="alert-cards">
+      <div class="alert-card">
+        <div class="a-icon">💰</div>
+        <div class="a-title">Rent Review Due</div>
+        <div class="a-text">14 Bellbird St — Sarah Thompson's 12-month review period ends in 28 days. QLD law prohibits increases more than once every 12 months.</div>
+        <div class="a-due amber">⚡ Due 22 April 2026</div>
+      </div>
+      <div class="alert-card">
+        <div class="a-icon">📋</div>
+        <div class="a-title">Lease Renewal</div>
+        <div class="a-text">22 Grange Rd — Joel & Aimee Park's fixed term ends in 19 days. New Form 18a or periodic continuation letter required.</div>
+        <div class="a-due amber">⚡ Due 13 April 2026</div>
+      </div>
+      <div class="alert-card">
+        <div class="a-icon">🔋</div>
+        <div class="a-title">Safety Switch Test</div>
+        <div class="a-text">9 Deagon St — Annual safety switch test due in 42 days. New QLD requirements from 1 Jan 2025 for all managed properties.</div>
+        <div class="a-due green">✓ Due 6 May 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-section" id="summary">
+    <div class="summary-grid">
+      <div class="summary-card good">
+        <div class="s-label">Portfolio Compliance Score</div>
+        <div class="s-val">93%</div>
+        <div class="s-sub">1 issue open · 2 due soon</div>
+      </div>
+      <div class="summary-card warn">
+        <div class="s-label">Avg. Resolution Time</div>
+        <div class="s-val">6h</div>
+        <div class="s-sub">Down from 3.2 days manually</div>
+      </div>
+      <div class="summary-card info">
+        <div class="s-label">Auto-actions This Month</div>
+        <div class="s-val">23</div>
+        <div class="s-sub">Notices, bookings & reminders sent</div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="result-icon">🛡️</div>
+      <div class="result-title">Stay compliant without the stress.</div>
+      <div class="result-sub">Tenantflow monitors every QLD obligation across your whole portfolio — automatically flagging issues, drafting notices, and booking contractors before things become problems.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="cta-bar">
+  <h2>Never miss a QLD compliance deadline again.</h2>
+  <p>Join Queensland property managers already on the early access list.</p>
+  <div class="cta-btns">
+    <a href="app.html" class="btn-primary">▶ Try the live demo</a>
+    <a href="index.html#early-access" class="btn-secondary">Get early access</a>
+  </div>
+</div>
+
+<script>
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('dash').classList.add('visible'), 300);
+  const rows = ['p1','p2','p3','p4','p5','p6'];
+  rows.forEach((id, i) => setTimeout(() => { const el = document.getElementById(id); if(el) el.classList.add('visible'); }, 600 + i * 180));
+  setTimeout(() => document.getElementById('detail').classList.add('visible'), 2000);
+  setTimeout(() => document.getElementById('ai-alert').classList.add('visible'), 3200);
+  setTimeout(() => document.getElementById('summary').classList.add('visible'), 4400);
+});
+</script>
+</body>
+</html>
