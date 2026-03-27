@@ -3,67 +3,1045 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tenantflow — Product Demo Video</title>
-  <meta name="description" content="Watch Tenantflow in action — AI-powered property management built from the ground up for Queensland legislation (RTRA Act 2008).">
+  <title>CasaFlow — See It In Action</title>
+  <meta name="description" content="Watch CasaFlow handle the workflows that consume your day — maintenance, arrears, lease renewals, compliance and owner reports.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    :root{--blue:#1d4ed8;--purple:#7c3aed;--dark:#0f172a;--mid:#1e293b;}
-    html,body{height:100%;font-family:'Inter',sans-serif;background:var(--dark);color:#fff;overflow-x:hidden;}
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);padding:0 5%;}
-    .nav-inner{display:flex;align-items:center;justify-content:space-between;height:60px;max-width:1200px;margin:0 auto;}
-    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-    .nav-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px;}
-    .nav-brand{font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
-    .nav-right{display:flex;align-items:center;gap:16px;}
-    .badge{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a78bfa;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
-    .btn-nav{background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:7px;text-decoration:none;}
-    .page-hero{padding:100px 5% 40px;text-align:center;max-width:860px;margin:0 auto;}
-    .hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#a78bfa;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:20px;}
-    .hero-eyebrow-dot{width:5px;height:5px;border-radius:50%;background:#a78bfa;animation:pulse 2s infinite;}
-    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
-    .page-hero h1{font-size:clamp(28px,4vw,52px);font-weight:900;line-height:1.08;letter-spacing:-1.5px;color:#fff;margin-bottom:14px;}
-    .page-hero h1 .grad{background:linear-gradient(135deg,#60a5fa,#a78bfa 55%,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-    .page-hero p{font-size:16px;color:rgba(255,255,255,0.5);max-width:580px;margin:0 auto 32px;line-height:1.65;}
-    .video-section{padding:0 5% 60px;max-width:1100px;margin:0 auto;}
-    .video-shell{border-radius:16px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.07),0 40px 80px rgba(0,0,0,0.6);}
-    .video-topbar{background:#1e293b;padding:10px 16px;display:flex;align-items:center;gap:6px;}
-    .vtb-dot{width:10px;height:10px;border-radius:50%;}
-    .vtb-url{flex:1;text-align:center;font-size:11px;color:rgba(255,255,255,0.25);font-family:monospace;background:rgba(0,0,0,0.3);padding:3px 12px;border-radius:4px;max-width:260px;margin:0 auto;}
-    video{display:block;width:100%;background:#000;}
-    .chapters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 8px;}
-    .ch{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.55);font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;}
-    .ch span{color:#60a5fa;font-weight:700;margin-right:4px;}
-    .rtra-band{background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(124,58,237,0.08));border:1px solid rgba(99,102,241,0.2);border-radius:14px;padding:28px 32px;margin:40px auto;max-width:900px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;}
-    .rtra-icon{font-size:36px;}
-    .rtra-text h3{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;}
-    .rtra-text p{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.65;}
-    .rtra-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
-    .rtra-tag{background:rgba(99,102,241,0.15);color:#a78bfa;font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;}
-    .features-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:40px auto;max-width:900px;}
-    .feat-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 16px;}
-    .feat-pill-icon{font-size:18px;}
-    .feat-pill-text strong{display:block;color:#fff;font-weight:700;margin-bottom:1px;font-size:12px;}
-    .feat-pill-text span{color:rgba(255,255,255,0.4);font-size:11px;}
-    .demo-cta{text-align:center;padding:40px 5% 80px;}
-    .demo-cta h2{font-size:clamp(22px,3vw,36px);font-weight:900;color:#fff;letter-spacing:-1px;margin-bottom:10px;}
-    .demo-cta p{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:28px;}
-    .cta-buttons{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;}
-    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;padding:13px 24px;font-size:14px;border-radius:9px;text-decoration:none;font-weight:700;display:inline-flex;align-items:center;gap:6px;}
-    .btn-outline{border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);background:transparent;padding:13px 24px;font-size:14px;border-radius:9px;text-decoration:none;font-weight:600;}
-    footer{border-top:1px solid rgba(255,255,255,0.06);padding:24px 5%;text-align:center;}
-    footer p{font-size:12px;color:rgba(255,255,255,0.2);}
-    footer a{color:rgba(255,255,255,0.35);text-decoration:none;margin:0 10px;}
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream:   #FAFAF7;
+      --warm:    #F4F0E8;
+      --navy:    #0F1629;
+      --navy2:   #1A2340;
+      --gold:    #B8922A;
+      --gold-lt: #D4A94A;
+      --cyan:    #0891b2;
+      --cyan-lt: #E0F2FE;
+      --purple:  #6355E8;
+      --purple-lt:#EDE9FE;
+      --green:   #059669;
+      --green-lt:#D1FAE5;
+      --red:     #DC2626;
+      --red-lt:  #FEE2E2;
+      --amber:   #D97706;
+      --amber-lt:#FEF3C7;
+      --mid:     #6B7280;
+      --border:  rgba(0,0,0,0.07);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 64px;
+      background: rgba(250,250,247,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-mark {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 14px; color: white;
+    }
+    .nav-name { font-size: 17px; font-weight: 700; color: var(--navy); }
+    .nav-name span { color: var(--cyan); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-link { font-size: 13px; font-weight: 500; color: var(--mid); text-decoration: none; transition: color 0.2s; }
+    .nav-link:hover { color: var(--navy); }
+    .btn-nav {
+      padding: 8px 20px; border-radius: 20px; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; transition: all 0.2s;
+    }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--navy); }
+    .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+    .btn-solid { background: var(--navy); color: white; }
+    .btn-solid:hover { background: var(--navy2); transform: translateY(-1px); }
+
+    /* ── HERO ────────────────────────────────── */
+    .hero {
+      padding: 110px 24px 64px;
+      background: linear-gradient(160deg, #E8EEF8 0%, #F4F0E8 50%, #FAFAF7 100%);
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: white; border: 1px solid rgba(8,145,178,0.25);
+      border-radius: 24px; padding: 6px 16px;
+      font-size: 12px; font-weight: 600; color: var(--cyan);
+      letter-spacing: 0.8px; text-transform: uppercase;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(8,145,178,0.1);
+    }
+    .hero-badge::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--cyan); border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -2px; color: var(--navy);
+      margin-bottom: 18px;
+    }
+    .hero h1 span { color: var(--cyan); }
+    .hero p {
+      font-size: 17px; color: var(--mid);
+      max-width: 520px; margin: 0 auto 12px;
+      line-height: 1.7;
+    }
+    .hero-sub-note {
+      font-size: 13px; color: var(--mid);
+      margin-bottom: 40px; opacity: 0.7;
+    }
+
+    /* ── DEMO PLAYER ─────────────────────────── */
+    .player-wrap {
+      max-width: 1000px; margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .browser-chrome {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .browser-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px;
+      background: #F8F8F8;
+      border-bottom: 1px solid #E5E5E5;
+    }
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dots span {
+      width: 12px; height: 12px; border-radius: 50%;
+    }
+    .browser-dots span:nth-child(1) { background: #FF5F57; }
+    .browser-dots span:nth-child(2) { background: #FFBD2E; }
+    .browser-dots span:nth-child(3) { background: #28C840; }
+    .browser-url {
+      flex: 1; max-width: 340px; margin: 0 auto;
+      background: #EFEFEF; border-radius: 6px;
+      padding: 5px 12px; font-size: 12px; color: #666;
+      text-align: center;
+    }
+
+    /* ── SCREEN CONTENT ──────────────────────── */
+    .screen {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+      background: #F7F8FC;
+    }
+    .scene {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity 0.6s ease;
+      display: flex; flex-direction: column;
+    }
+    .scene.active { opacity: 1; }
+
+    /* Scene inner layout */
+    .scene-shell {
+      display: flex; height: 100%;
+    }
+    .scene-sidebar {
+      width: 200px; flex-shrink: 0;
+      background: var(--navy);
+      padding: 20px 0;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .scene-sidebar-logo {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 8px;
+    }
+    .scene-sidebar-logo-mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 900; color: white;
+    }
+    .scene-sidebar-logo span { font-size: 13px; font-weight: 700; color: white; }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px; font-size: 12px;
+      color: rgba(255,255,255,0.45); border-radius: 0;
+      cursor: default; transition: background 0.2s;
+    }
+    .sidebar-item.active {
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
+    .sidebar-item .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor; flex-shrink: 0;
+    }
+    .scene-main { flex: 1; padding: 24px; overflow: hidden; }
+    .scene-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .scene-title { font-size: 16px; font-weight: 700; color: var(--navy); }
+    .scene-date { font-size: 11px; color: var(--mid); }
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .pill-green { background: var(--green-lt); color: var(--green); }
+    .pill-amber { background: var(--amber-lt); color: var(--amber); }
+    .pill-red   { background: var(--red-lt); color: var(--red); }
+    .pill-blue  { background: var(--cyan-lt); color: var(--cyan); }
+    .pill-purple{ background: var(--purple-lt); color: var(--purple); }
+
+    /* ── SCENE 1: DASHBOARD ──────────────────── */
+    .dash-stats {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+      margin-bottom: 16px;
+    }
+    .dash-stat {
+      background: white; border-radius: 10px; padding: 14px;
+      border: 1px solid var(--border);
+    }
+    .dash-stat-num { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.5px; }
+    .dash-stat-label { font-size: 11px; color: var(--mid); margin-top: 2px; }
+    .dash-stat-change { font-size: 10px; color: var(--green); font-weight: 600; margin-top: 4px; }
+    .dash-row {
+      display: grid; grid-template-columns: 2fr 1fr; gap: 12px;
+    }
+    .dash-card {
+      background: white; border-radius: 10px; padding: 14px;
+      border: 1px solid var(--border);
+    }
+    .dash-card-title { font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+    .task-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 0; border-bottom: 1px solid #F0F0F0;
+      font-size: 11px; color: var(--navy);
+    }
+    .task-item:last-child { border-bottom: none; }
+    .task-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── SCENE 2: MAINTENANCE ────────────────── */
+    .maint-list { display: flex; flex-direction: column; gap: 8px; }
+    .maint-card {
+      background: white; border-radius: 10px; padding: 12px 14px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .maint-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .maint-info { flex: 1; }
+    .maint-title { font-size: 12px; font-weight: 600; color: var(--navy); }
+    .maint-addr { font-size: 11px; color: var(--mid); margin-top: 2px; }
+    .maint-right { text-align: right; }
+    .progress-bar { height: 4px; background: #EEE; border-radius: 4px; margin-top: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 4px; background: var(--cyan); }
+    .progress-fill.animated { animation: fillBar 2s ease forwards; }
+    @keyframes fillBar { from{width:0} }
+
+    /* ── SCENE 3: ARREARS ────────────────────── */
+    .arrears-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .arrears-table th {
+      text-align: left; padding: 8px 10px; font-size: 10px;
+      font-weight: 600; color: var(--mid);
+      background: #F8F8F8; border-bottom: 1px solid #EEE;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .arrears-table td { padding: 8px 10px; border-bottom: 1px solid #F5F5F5; color: var(--navy); }
+    .arrears-table tr:hover td { background: #FAFAFA; }
+    .action-btn {
+      padding: 3px 10px; border-radius: 12px; border: none; cursor: pointer;
+      font-size: 10px; font-weight: 600; background: var(--navy); color: white;
+    }
+    .action-btn.ghost { background: #F0F0F0; color: var(--navy); }
+
+    /* ── SCENE 4: LEASE RENEWALS ─────────────── */
+    .renewal-list { display: flex; flex-direction: column; gap: 8px; }
+    .renewal-card {
+      background: white; border-radius: 10px; padding: 12px 14px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .renewal-left { display: flex; align-items: center; gap: 10px; }
+    .renewal-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: white;
+      flex-shrink: 0;
+    }
+    .renewal-name { font-size: 12px; font-weight: 600; color: var(--navy); }
+    .renewal-addr { font-size: 11px; color: var(--mid); }
+    .renewal-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── SCENE 5: COMPLIANCE ─────────────────── */
+    .compliance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .comp-card {
+      background: white; border-radius: 10px; padding: 12px;
+      border: 1px solid var(--border);
+    }
+    .comp-icon { font-size: 18px; margin-bottom: 6px; }
+    .comp-title { font-size: 12px; font-weight: 600; color: var(--navy); }
+    .comp-count { font-size: 20px; font-weight: 800; margin: 4px 0; }
+    .comp-bar { height: 3px; background: #EEE; border-radius: 3px; overflow: hidden; }
+    .comp-fill { height: 100%; border-radius: 3px; }
+
+    /* ── SCENE 6: OWNER REPORT ───────────────── */
+    .report-card {
+      background: white; border-radius: 10px; padding: 16px;
+      border: 1px solid var(--border); height: 100%;
+    }
+    .report-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .report-title { font-size: 13px; font-weight: 700; color: var(--navy); }
+    .report-addr { font-size: 11px; color: var(--mid); }
+    .report-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .report-stat { text-align: center; padding: 10px; background: #F8F8F8; border-radius: 8px; }
+    .report-stat-num { font-size: 18px; font-weight: 800; color: var(--navy); }
+    .report-stat-label { font-size: 10px; color: var(--mid); }
+    .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 60px; margin-top: 10px; }
+    .chart-bar {
+      flex: 1; border-radius: 4px 4px 0 0;
+      background: var(--cyan-lt);
+      transition: height 1s ease;
+    }
+    .chart-bar.active { background: var(--cyan); }
+
+    /* ── PLAYER CONTROLS ─────────────────────── */
+    .player-controls {
+      padding: 14px 20px 16px;
+      background: white;
+      border-top: 1px solid #EEE;
+    }
+    .progress-track {
+      width: 100%; height: 4px; background: #E8E8E8;
+      border-radius: 4px; margin-bottom: 12px;
+      cursor: pointer; overflow: hidden;
+    }
+    .progress-head {
+      height: 100%; background: linear-gradient(90deg, var(--cyan), var(--purple));
+      border-radius: 4px; width: 0%;
+      transition: width 0.1s linear;
+    }
+    .controls-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .controls-left { display: flex; align-items: center; gap: 12px; }
+    .play-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--navy); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 14px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .play-btn:hover { background: var(--navy2); transform: scale(1.05); }
+    .time-display { font-size: 13px; color: var(--mid); font-variant-numeric: tabular-nums; font-weight: 500; }
+    .scene-label { font-size: 13px; font-weight: 600; color: var(--navy); }
+
+    /* ── CHAPTER MARKERS ─────────────────────── */
+    .chapters {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      max-width: 1000px; margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .chapter-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 20px;
+      background: white; border: 1px solid var(--border);
+      font-size: 12px; font-weight: 500; color: var(--mid);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .chapter-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+    .chapter-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
+    .chapter-btn .ch-time { font-size: 10px; opacity: 0.6; font-variant-numeric: tabular-nums; }
+
+    /* ── FEATURES BELOW ──────────────────────── */
+    .features {
+      background: white;
+      padding: 80px 24px;
+    }
+    .features-inner { max-width: 1000px; margin: 0 auto; }
+    .features-header { text-align: center; margin-bottom: 48px; }
+    .features-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+    }
+    .features-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700; color: var(--navy);
+      letter-spacing: -1px; margin-bottom: 14px;
+    }
+    .features-sub { font-size: 16px; color: var(--mid); max-width: 500px; margin: 0 auto; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .feature-card {
+      padding: 24px; border-radius: 16px;
+      border: 1px solid var(--border); background: #FAFAFA;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+    .feature-icon { font-size: 28px; margin-bottom: 12px; }
+    .feature-card h3 { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .feature-card p { font-size: 13px; color: var(--mid); line-height: 1.65; }
+
+    /* ── CTA ─────────────────────────────────── */
+    .cta-section {
+      padding: 80px 24px;
+      background: linear-gradient(135deg, var(--warm) 0%, var(--cream) 100%);
+      text-align: center;
+    }
+    .cta-inner { max-width: 540px; margin: 0 auto; }
+    .cta-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700; color: var(--navy);
+      letter-spacing: -1px; margin-bottom: 14px;
+    }
+    .cta-section p { font-size: 16px; color: var(--mid); margin-bottom: 32px; line-height: 1.7; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 14px 32px; border-radius: 50px;
+      background: var(--navy); color: white;
+      font-size: 14px; font-weight: 700;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 20px rgba(15,22,41,0.2);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(15,22,41,0.28); }
+    .btn-secondary {
+      padding: 14px 32px; border-radius: 50px;
+      background: white; color: var(--navy);
+      font-size: 14px; font-weight: 600;
+      text-decoration: none; border: 1px solid var(--border); cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+
+    footer {
+      background: var(--navy);
+      padding: 28px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    footer p { font-size: 12px; color: rgba(255,255,255,0.35); }
+    footer a { color: rgba(255,255,255,0.35); text-decoration: none; }
+    footer a:hover { color: var(--gold-lt); }
   </style>
 </head>
 <body>
-<nav><div class="nav-inner"><a href="index.html" class="nav-logo"><div class="nav-logo-mark">T</div><span class="nav-brand">Tenantflow</span></a><div class="nav-right"><span class="badge">&#9654; Product Demo</span><a href="app.html" class="btn-nav">Try Live Demo</a></div></div></nav>
-<div class="page-hero"><div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Built for Queensland Property Managers</div><h1>See Tenantflow<br><span class="grad">in action.</span></h1><p>Watch how Tenantflow handles the workflows that consume most of your day &mdash; built from the ground up for the RTRA Act 2008, not retrofitted to it.</p></div>
-<div class="video-section"><div class="video-shell"><div class="video-topbar"><div class="vtb-dot" style="background:#ef4444;"></div><div class="vtb-dot" style="background:#f59e0b;"></div><div class="vtb-dot" style="background:#22c55e;"></div><div class="vtb-url">tenantflow.app/dashboard</div></div><video controls preload="metadata"><source src="tenantflow-demo.mp4" type="video/mp4">Your browser doesn't support HTML5 video.</video></div><div class="chapters"><div class="ch"><span>0:00</span>The Problem</div><div class="ch"><span>0:05</span>The Solution</div><div class="ch"><span>0:10</span>AI Inbox</div><div class="ch"><span>0:16</span>Rent Arrears</div><div class="ch"><span>0:21</span>Compliance</div><div class="ch"><span>0:27</span>Owner Reports</div><div class="ch"><span>0:31</span>Get Early Access</div></div></div>
-<div class="rtra-band" style="margin-left:auto;margin-right:auto;"><div class="rtra-icon">&#9878;</div><div class="rtra-text"><h3>Built from the ground up for Queensland legislation</h3><p>Tenantflow isn't a generic platform with a Queensland settings toggle. Every notice period, form number, and compliance deadline is mapped directly to the <em>Residential Tenancies and Rooming Accommodation Act 2008</em>.</p><div class="rtra-tags"><span class="rtra-tag">RTRA Act 2008</span><span class="rtra-tag">Form 11 &amp; 12</span><span class="rtra-tag">s.281 Arrears</span><span class="rtra-tag">s.192 Entry Notices</span><span class="rtra-tag">s.166 Smoke Alarms</span><span class="rtra-tag">s.143 Bond Lodgement</span><span class="rtra-tag">Form 18a Agreements</span><span class="rtra-tag">QCAT Bundles</span></div></div></div>
-<div class="features-row"><div class="feat-pill"><div class="feat-pill-icon">&#129302;</div><div class="feat-pill-text"><strong>AI Inbox Triage</strong><span>Classifies every email instantly</span></div></div><div class="feat-pill"><div class="feat-pill-icon">&#128176;</div><div class="feat-pill-text"><strong>Rent Arrears Automation</strong><span>Form 11 &rarr; Form 12 &rarr; QCAT</span></div></div><div class="feat-pill"><div class="feat-pill-icon">&#9989;</div><div class="feat-pill-text"><strong>Compliance Calendar</strong><span>Every obligation tracked</span></div></div><div class="feat-pill"><div class="feat-pill-icon">&#128202;</div><div class="feat-pill-text"><strong>Owner Reports</strong><span>Auto-generated in 30 seconds</span></div></div><div class="feat-pill"><div class="feat-pill-icon">&#128196;</div><div class="feat-pill-text"><strong>Smart Form Generation</strong><span>Form 18a, 9, 11, 12 ready instantly</span></div></div><div class="feat-pill"><div class="feat-pill-icon">&#128295;</div><div class="feat-pill-text"><strong>Maintenance Workflows</strong><span>RTRA s.185 obligations built in</span></div></div></div>
-<div class="demo-cta"><h2>Ready to try it yourself?</h2><p>Explore the live interactive demo &mdash; no login required.</p><div class="cta-buttons"><a href="app.html" class="btn-primary">&#9654; Try the Live Demo</a><a href="index.html#early-access" class="btn-outline">Get Early Access</a></div></div>
-<footer><p><a href="index.html">Home</a><a href="app.html">Live Demo</a><a href="demo-inbox.html">AI Inbox Demo</a><a href="demo-arrears.html">Arrears Demo</a></p><p style="margin-top:12px;">&#169; 2026 Tenantflow. Built for Queensland, Australia.</p></footer>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <div class="nav-mark">CF</div>
+      <span class="nav-name">Casa<span>Flow</span></span>
+    </a>
+    <div class="nav-right">
+      <a href="/" class="nav-link">Home</a>
+      <button class="btn-nav btn-ghost">Live Demo</button>
+      <button class="btn-nav btn-solid">Get Early Access</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">CasaFlow Product Tour</div>
+    <h1>See it <span>in action.</span></h1>
+    <p>Watch CasaFlow handle the workflows that eat your day — built from the ground up for Queensland property management, not retrofitted to it.</p>
+    <p class="hero-sub-note">▶ Press play below — 60 second walkthrough</p>
+  </div>
+
+  <!-- DEMO PLAYER -->
+  <div class="player-wrap">
+    <div class="browser-chrome">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="browser-url" id="browserUrl">casaflow.app/dashboard</div>
+      </div>
+
+      <div class="screen">
+
+        <!-- SCENE 1: DASHBOARD -->
+        <div class="scene active" id="scene-0">
+          <div class="scene-shell">
+            <div class="scene-sidebar">
+              <div class="scene-sidebar-logo">
+                <div class="scene-sidebar-logo-mark">CF</div>
+                <span>CasaFlow</span>
+              </div>
+              <div class="sidebar-item active"><span class="dot"></span>Dashboard</div>
+              <div class="sidebar-item"><span class="dot"></span>Properties</div>
+              <div class="sidebar-item"><span class="dot"></span>Maintenance</div>
+              <div class="sidebar-item"><span class="dot"></span>Lease Renewals</div>
+              <div class="sidebar-item"><span class="dot"></span>Arrears</div>
+              <div class="sidebar-item"><span class="dot"></span>Compliance</div>
+              <div class="sidebar-item"><span class="dot"></span>Owner Reports</div>
+            </div>
+            <div class="scene-main">
+              <div class="scene-header">
+                <div class="scene-title">Good morning, Wayne 👋</div>
+                <div class="scene-date">Friday, 27 March 2026</div>
+              </div>
+              <div class="dash-stats">
+                <div class="dash-stat">
+                  <div class="dash-stat-num">352</div>
+                  <div class="dash-stat-label">Properties</div>
+                  <div class="dash-stat-change">↑ 4 this month</div>
+                </div>
+                <div class="dash-stat">
+                  <div class="dash-stat-num" style="color:var(--amber)">7</div>
+                  <div class="dash-stat-label">Arrears</div>
+                  <div class="dash-stat-change" style="color:var(--amber)">Needs attention</div>
+                </div>
+                <div class="dash-stat">
+                  <div class="dash-stat-num" style="color:var(--cyan)">14</div>
+                  <div class="dash-stat-label">Maintenance Jobs</div>
+                  <div class="dash-stat-change" style="color:var(--cyan)">3 awaiting approval</div>
+                </div>
+                <div class="dash-stat">
+                  <div class="dash-stat-num" style="color:var(--purple)">11</div>
+                  <div class="dash-stat-label">Lease Renewals</div>
+                  <div class="dash-stat-change" style="color:var(--purple)">Due this month</div>
+                </div>
+              </div>
+              <div class="dash-row">
+                <div class="dash-card">
+                  <div class="dash-card-title">Today's Tasks</div>
+                  <div class="task-item"><div class="task-dot" style="background:var(--red)"></div>Send Form 11 — 12 Maple St</div>
+                  <div class="task-item"><div class="task-dot" style="background:var(--amber)"></div>Approve maintenance — 4/8 Park Ave</div>
+                  <div class="task-item"><div class="task-dot" style="background:var(--cyan)"></div>Follow up lease renewal — 23 River Rd</div>
+                  <div class="task-item"><div class="task-dot" style="background:var(--green)"></div>Entry condition report — 7 Oak Ct</div>
+                  <div class="task-item"><div class="task-dot" style="background:var(--purple)"></div>Owner disbursements — 14 properties</div>
+                </div>
+                <div class="dash-card">
+                  <div class="dash-card-title">Compliance Alerts</div>
+                  <div class="task-item"><div class="task-dot" style="background:var(--red)"></div>Smoke alarm cert expired</div>
+                  <div class="task-item"><div class="task-dot" style="background:var(--amber)"></div>Pool cert due in 14 days</div>
+                  <div class="task-item"><div class="task-dot" style="background:var(--green)"></div>All gas certs current ✓</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 2: MAINTENANCE -->
+        <div class="scene" id="scene-1">
+          <div class="scene-shell">
+            <div class="scene-sidebar">
+              <div class="scene-sidebar-logo">
+                <div class="scene-sidebar-logo-mark">CF</div>
+                <span>CasaFlow</span>
+              </div>
+              <div class="sidebar-item"><span class="dot"></span>Dashboard</div>
+              <div class="sidebar-item"><span class="dot"></span>Properties</div>
+              <div class="sidebar-item active"><span class="dot"></span>Maintenance</div>
+              <div class="sidebar-item"><span class="dot"></span>Lease Renewals</div>
+              <div class="sidebar-item"><span class="dot"></span>Arrears</div>
+              <div class="sidebar-item"><span class="dot"></span>Compliance</div>
+              <div class="sidebar-item"><span class="dot"></span>Owner Reports</div>
+            </div>
+            <div class="scene-main">
+              <div class="scene-header">
+                <div class="scene-title">Maintenance Jobs</div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <span class="pill pill-amber">3 Awaiting Approval</span>
+                  <span class="pill pill-blue">14 Active</span>
+                </div>
+              </div>
+              <div class="maint-list">
+                <div class="maint-card">
+                  <div class="maint-icon" style="background:var(--red-lt)">🚿</div>
+                  <div class="maint-info">
+                    <div class="maint-title">Hot water system failure</div>
+                    <div class="maint-addr">12 Maple Street, Chermside — Tenant: Sarah M.</div>
+                  </div>
+                  <div class="maint-right">
+                    <span class="pill pill-red">Urgent</span>
+                    <div class="progress-bar" style="width:120px;margin-top:6px"><div class="progress-fill animated" style="width:65%"></div></div>
+                  </div>
+                </div>
+                <div class="maint-card">
+                  <div class="maint-icon" style="background:var(--amber-lt)">🔌</div>
+                  <div class="maint-info">
+                    <div class="maint-title">Powerpoint not working — bedroom</div>
+                    <div class="maint-addr">4/8 Park Avenue, Nundah — Tenant: James K.</div>
+                  </div>
+                  <div class="maint-right">
+                    <span class="pill pill-amber">Awaiting Approval</span>
+                    <div class="progress-bar" style="width:120px;margin-top:6px"><div class="progress-fill" style="width:20%;background:var(--amber)"></div></div>
+                  </div>
+                </div>
+                <div class="maint-card">
+                  <div class="maint-icon" style="background:var(--green-lt)">🚪</div>
+                  <div class="maint-info">
+                    <div class="maint-title">Screen door hinge broken</div>
+                    <div class="maint-addr">23 River Road, Kedron — Tenant: Lisa T.</div>
+                  </div>
+                  <div class="maint-right">
+                    <span class="pill pill-green">Work Order Sent</span>
+                    <div class="progress-bar" style="width:120px;margin-top:6px"><div class="progress-fill" style="width:80%;background:var(--green)"></div></div>
+                  </div>
+                </div>
+                <div class="maint-card">
+                  <div class="maint-icon" style="background:var(--cyan-lt)">🌿</div>
+                  <div class="maint-info">
+                    <div class="maint-title">Garden maintenance — annual</div>
+                    <div class="maint-addr">7 Oak Court, Stafford — Scheduled</div>
+                  </div>
+                  <div class="maint-right">
+                    <span class="pill pill-blue">Scheduled</span>
+                    <div class="progress-bar" style="width:120px;margin-top:6px"><div class="progress-fill" style="width:10%;background:var(--cyan)"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 3: ARREARS -->
+        <div class="scene" id="scene-2">
+          <div class="scene-shell">
+            <div class="scene-sidebar">
+              <div class="scene-sidebar-logo">
+                <div class="scene-sidebar-logo-mark">CF</div>
+                <span>CasaFlow</span>
+              </div>
+              <div class="sidebar-item"><span class="dot"></span>Dashboard</div>
+              <div class="sidebar-item"><span class="dot"></span>Properties</div>
+              <div class="sidebar-item"><span class="dot"></span>Maintenance</div>
+              <div class="sidebar-item"><span class="dot"></span>Lease Renewals</div>
+              <div class="sidebar-item active"><span class="dot"></span>Arrears</div>
+              <div class="sidebar-item"><span class="dot"></span>Compliance</div>
+              <div class="sidebar-item"><span class="dot"></span>Owner Reports</div>
+            </div>
+            <div class="scene-main">
+              <div class="scene-header">
+                <div class="scene-title">Rent Arrears</div>
+                <span class="pill pill-red">7 Tenants in Arrears</span>
+              </div>
+              <table class="arrears-table">
+                <thead>
+                  <tr>
+                    <th>Tenant</th>
+                    <th>Property</th>
+                    <th>Days</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>T. Robertson</strong></td>
+                    <td>12 Maple St</td>
+                    <td><span style="color:var(--red);font-weight:700">8 days</span></td>
+                    <td>$1,560</td>
+                    <td><span class="pill pill-red">Form 11 Issued</span></td>
+                    <td><button class="action-btn">Send Form 12</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>M. Chen</strong></td>
+                    <td>4/8 Park Ave</td>
+                    <td><span style="color:var(--amber);font-weight:700">5 days</span></td>
+                    <td>$975</td>
+                    <td><span class="pill pill-amber">Notified</span></td>
+                    <td><button class="action-btn ghost">Follow Up</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>J. Williams</strong></td>
+                    <td>23 River Rd</td>
+                    <td><span style="color:var(--amber);font-weight:700">3 days</span></td>
+                    <td>$650</td>
+                    <td><span class="pill pill-amber">SMS Sent</span></td>
+                    <td><button class="action-btn ghost">View</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>P. Singh</strong></td>
+                    <td>7 Oak Ct</td>
+                    <td><span style="color:var(--mid);font-weight:700">2 days</span></td>
+                    <td>$420</td>
+                    <td><span class="pill pill-blue">Auto-Notified</span></td>
+                    <td><button class="action-btn ghost">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 4: LEASE RENEWALS -->
+        <div class="scene" id="scene-3">
+          <div class="scene-shell">
+            <div class="scene-sidebar">
+              <div class="scene-sidebar-logo">
+                <div class="scene-sidebar-logo-mark">CF</div>
+                <span>CasaFlow</span>
+              </div>
+              <div class="sidebar-item"><span class="dot"></span>Dashboard</div>
+              <div class="sidebar-item"><span class="dot"></span>Properties</div>
+              <div class="sidebar-item"><span class="dot"></span>Maintenance</div>
+              <div class="sidebar-item active"><span class="dot"></span>Lease Renewals</div>
+              <div class="sidebar-item"><span class="dot"></span>Arrears</div>
+              <div class="sidebar-item"><span class="dot"></span>Compliance</div>
+              <div class="sidebar-item"><span class="dot"></span>Owner Reports</div>
+            </div>
+            <div class="scene-main">
+              <div class="scene-header">
+                <div class="scene-title">Lease Renewals — April</div>
+                <span class="pill pill-purple">11 Due This Month</span>
+              </div>
+              <div class="renewal-list">
+                <div class="renewal-card">
+                  <div class="renewal-left">
+                    <div class="renewal-avatar" style="background:var(--cyan)">SR</div>
+                    <div>
+                      <div class="renewal-name">Sarah Robertson</div>
+                      <div class="renewal-addr">12 Maple St — expires 15 Apr · Current: $520/wk</div>
+                    </div>
+                  </div>
+                  <div class="renewal-right">
+                    <span class="pill pill-green">Signed ✓</span>
+                    <span style="font-size:11px;color:var(--green);font-weight:600">+$20/wk</span>
+                  </div>
+                </div>
+                <div class="renewal-card">
+                  <div class="renewal-left">
+                    <div class="renewal-avatar" style="background:var(--purple)">JK</div>
+                    <div>
+                      <div class="renewal-name">James Kim</div>
+                      <div class="renewal-addr">4/8 Park Ave — expires 22 Apr · Current: $395/wk</div>
+                    </div>
+                  </div>
+                  <div class="renewal-right">
+                    <span class="pill pill-amber">Awaiting Tenant</span>
+                    <button class="action-btn" style="font-size:10px;padding:3px 8px">Follow Up</button>
+                  </div>
+                </div>
+                <div class="renewal-card">
+                  <div class="renewal-left">
+                    <div class="renewal-avatar" style="background:var(--amber)">LT</div>
+                    <div>
+                      <div class="renewal-name">Lisa Thompson</div>
+                      <div class="renewal-addr">23 River Rd — expires 28 Apr · Current: $480/wk</div>
+                    </div>
+                  </div>
+                  <div class="renewal-right">
+                    <span class="pill pill-blue">Sent to Owner</span>
+                  </div>
+                </div>
+                <div class="renewal-card">
+                  <div class="renewal-left">
+                    <div class="renewal-avatar" style="background:var(--green)">PS</div>
+                    <div>
+                      <div class="renewal-name">Priya Singh</div>
+                      <div class="renewal-addr">7 Oak Ct — expires 30 Apr · Current: $560/wk</div>
+                    </div>
+                  </div>
+                  <div class="renewal-right">
+                    <span class="pill pill-red">No Intentions</span>
+                    <button class="action-btn" style="font-size:10px;padding:3px 8px">Issue NTL</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 5: COMPLIANCE -->
+        <div class="scene" id="scene-4">
+          <div class="scene-shell">
+            <div class="scene-sidebar">
+              <div class="scene-sidebar-logo">
+                <div class="scene-sidebar-logo-mark">CF</div>
+                <span>CasaFlow</span>
+              </div>
+              <div class="sidebar-item"><span class="dot"></span>Dashboard</div>
+              <div class="sidebar-item"><span class="dot"></span>Properties</div>
+              <div class="sidebar-item"><span class="dot"></span>Maintenance</div>
+              <div class="sidebar-item"><span class="dot"></span>Lease Renewals</div>
+              <div class="sidebar-item"><span class="dot"></span>Arrears</div>
+              <div class="sidebar-item active"><span class="dot"></span>Compliance</div>
+              <div class="sidebar-item"><span class="dot"></span>Owner Reports</div>
+            </div>
+            <div class="scene-main">
+              <div class="scene-header">
+                <div class="scene-title">Compliance Dashboard</div>
+                <span class="pill pill-green">2 Alerts</span>
+              </div>
+              <div class="compliance-grid">
+                <div class="comp-card">
+                  <div class="comp-icon">🔥</div>
+                  <div class="comp-title">Smoke Alarms</div>
+                  <div class="comp-count" style="color:var(--red)">3 <span style="font-size:13px;color:var(--mid);font-weight:400">expired</span></div>
+                  <div class="comp-bar"><div class="comp-fill" style="width:91%;background:var(--green)"></div></div>
+                  <div style="font-size:10px;color:var(--mid);margin-top:4px">320/352 compliant</div>
+                </div>
+                <div class="comp-card">
+                  <div class="comp-icon">🏊</div>
+                  <div class="comp-title">Pool Safety</div>
+                  <div class="comp-count" style="color:var(--amber)">2 <span style="font-size:13px;color:var(--mid);font-weight:400">due soon</span></div>
+                  <div class="comp-bar"><div class="comp-fill" style="width:96%;background:var(--cyan)"></div></div>
+                  <div style="font-size:10px;color:var(--mid);margin-top:4px">48/50 compliant</div>
+                </div>
+                <div class="comp-card">
+                  <div class="comp-icon">💧</div>
+                  <div class="comp-title">Water Compliance</div>
+                  <div class="comp-count" style="color:var(--green)">✓ <span style="font-size:13px;color:var(--mid);font-weight:400">all current</span></div>
+                  <div class="comp-bar"><div class="comp-fill" style="width:100%;background:var(--green)"></div></div>
+                  <div style="font-size:10px;color:var(--mid);margin-top:4px">352/352 compliant</div>
+                </div>
+                <div class="comp-card">
+                  <div class="comp-icon">⚡</div>
+                  <div class="comp-title">Electrical Safety</div>
+                  <div class="comp-count" style="color:var(--green)">✓ <span style="font-size:13px;color:var(--mid);font-weight:400">all current</span></div>
+                  <div class="comp-bar"><div class="comp-fill" style="width:100%;background:var(--purple)"></div></div>
+                  <div style="font-size:10px;color:var(--mid);margin-top:4px">352/352 compliant</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 6: OWNER REPORT -->
+        <div class="scene" id="scene-5">
+          <div class="scene-shell">
+            <div class="scene-sidebar">
+              <div class="scene-sidebar-logo">
+                <div class="scene-sidebar-logo-mark">CF</div>
+                <span>CasaFlow</span>
+              </div>
+              <div class="sidebar-item"><span class="dot"></span>Dashboard</div>
+              <div class="sidebar-item"><span class="dot"></span>Properties</div>
+              <div class="sidebar-item"><span class="dot"></span>Maintenance</div>
+              <div class="sidebar-item"><span class="dot"></span>Lease Renewals</div>
+              <div class="sidebar-item"><span class="dot"></span>Arrears</div>
+              <div class="sidebar-item"><span class="dot"></span>Compliance</div>
+              <div class="sidebar-item active"><span class="dot"></span>Owner Reports</div>
+            </div>
+            <div class="scene-main">
+              <div class="scene-header">
+                <div class="scene-title">Owner Report — March 2026</div>
+                <button class="action-btn" style="padding:5px 14px;font-size:11px">Generate PDF ↓</button>
+              </div>
+              <div class="report-card">
+                <div class="report-header">
+                  <div>
+                    <div class="report-title">12 Maple Street, Chermside QLD 4032</div>
+                    <div class="report-addr">Owner: D. Robertson · Statement Period: 1–31 March 2026</div>
+                  </div>
+                  <span class="pill pill-green">Disbursed ✓</span>
+                </div>
+                <div class="report-stats">
+                  <div class="report-stat">
+                    <div class="report-stat-num">$2,340</div>
+                    <div class="report-stat-label">Rent Received</div>
+                  </div>
+                  <div class="report-stat">
+                    <div class="report-stat-num" style="color:var(--red)">$185</div>
+                    <div class="report-stat-label">Maintenance</div>
+                  </div>
+                  <div class="report-stat">
+                    <div class="report-stat-num" style="color:var(--green)">$2,038</div>
+                    <div class="report-stat-label">Net Disbursed</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;font-weight:600;color:var(--mid);margin-bottom:6px">6-Month Rent History</div>
+                <div class="chart-bars">
+                  <div class="chart-bar active" style="height:78%"></div>
+                  <div class="chart-bar active" style="height:82%"></div>
+                  <div class="chart-bar active" style="height:78%"></div>
+                  <div class="chart-bar active" style="height:90%"></div>
+                  <div class="chart-bar active" style="height:85%"></div>
+                  <div class="chart-bar active" style="height:95%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /screen -->
+
+      <!-- PLAYER CONTROLS -->
+      <div class="player-controls">
+        <div class="progress-track" id="progressTrack" onclick="seekTo(event)">
+          <div class="progress-head" id="progressHead"></div>
+        </div>
+        <div class="controls-row">
+          <div class="controls-left">
+            <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+            <div class="time-display" id="timeDisplay">0:00 / 1:00</div>
+          </div>
+          <div class="scene-label" id="sceneLabel">Dashboard Overview</div>
+        </div>
+      </div>
+    </div><!-- /browser-chrome -->
+  </div><!-- /player-wrap -->
+
+  <!-- CHAPTER MARKERS -->
+  <div class="chapters">
+    <div class="chapter-btn active" onclick="goToScene(0)" id="ch-0"><span class="ch-time">0:00</span> Dashboard</div>
+    <div class="chapter-btn" onclick="goToScene(1)" id="ch-1"><span class="ch-time">0:10</span> Maintenance</div>
+    <div class="chapter-btn" onclick="goToScene(2)" id="ch-2"><span class="ch-time">0:20</span> Rent Arrears</div>
+    <div class="chapter-btn" onclick="goToScene(3)" id="ch-3"><span class="ch-time">0:30</span> Lease Renewals</div>
+    <div class="chapter-btn" onclick="goToScene(4)" id="ch-4"><span class="ch-time">0:42</span> Compliance</div>
+    <div class="chapter-btn" onclick="goToScene(5)" id="ch-5"><span class="ch-time">0:52</span> Owner Reports</div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="features-inner">
+      <div class="features-header">
+        <div class="features-label">Built for Queensland</div>
+        <h2 class="features-title">Every workflow. Handled.</h2>
+        <p class="features-sub">Not a generic platform with a QLD settings toggle — every process is mapped to the RTRA Act 2008.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>VA-Powered Automation</h3>
+          <p>Maintenance approvals, arrears notifications, lease renewal drafts and entry notices — handled automatically so your team focuses on what matters.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚖️</div>
+          <h3>RTRA Act Built-In</h3>
+          <p>Form 11s, Form 12s, s.281 arrears timelines, s.192 entry notices — every notice period and form number mapped directly to Queensland legislation.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Owner Reports in 30 Seconds</h3>
+          <p>Auto-generated statements, maintenance summaries, rent history and disbursement records — ready to send without touching a template.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Compliance Tracking</h3>
+          <p>Smoke alarms, pool safety, gas, electrical and water compliance audited automatically. Nothing slips through.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>Lease Renewal Workflows</h3>
+          <p>CMA creation, tenant intention requests, owner approvals, document drafting and signing — the full renewal cycle managed end-to-end.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <h3>Trust Accounting</h3>
+          <p>Owner disbursements, tenant funds, bill processing, bank reconciliation — fully transparent trust management built into the platform.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-inner">
+      <h2>Ready to see it in your portfolio?</h2>
+      <p>CasaFlow is currently in early access for Queensland property management agencies. Get in before the queue fills up.</p>
+      <div class="cta-btns">
+        <a href="/" class="btn-primary">Get Early Access</a>
+        <a href="/" class="btn-secondary">Back to Home</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 CasaFlow by CasaWealth. Built for Queensland, Australia.</p>
+    <div style="display:flex;gap:20px">
+      <a href="/">Home</a>
+      <a href="/demo.html">Product Tour</a>
+      <a href="https://casawealth.com.au">CasaWealth</a>
+    </div>
+  </footer>
+
+  <script>
+    const TOTAL      = 60;    // seconds
+    const SCENES     = 6;
+    const sceneTimes = [0, 10, 20, 30, 42, 52]; // start time of each scene
+    const sceneLabels = ['Dashboard Overview', 'Maintenance Workflows', 'Rent Arrears', 'Lease Renewals', 'Compliance Tracking', 'Owner Reports'];
+    const sceneUrls   = ['casaflow.app/dashboard', 'casaflow.app/maintenance', 'casaflow.app/arrears', 'casaflow.app/renewals', 'casaflow.app/compliance', 'casaflow.app/reports'];
+
+    let currentTime = 0;
+    let playing = false;
+    let interval = null;
+    let currentScene = 0;
+
+    function formatTime(s) {
+      return `0:${String(Math.floor(s)).padStart(2,'0')}`;
+    }
+
+    function updateUI() {
+      const pct = (currentTime / TOTAL) * 100;
+      document.getElementById('progressHead').style.width = pct + '%';
+      document.getElementById('timeDisplay').textContent = `${formatTime(currentTime)} / 1:00`;
+
+      // Determine scene
+      let sceneIdx = 0;
+      for (let i = 0; i < sceneTimes.length; i++) {
+        if (currentTime >= sceneTimes[i]) sceneIdx = i;
+      }
+
+      if (sceneIdx !== currentScene) {
+        document.getElementById(`scene-${currentScene}`).classList.remove('active');
+        document.getElementById(`scene-${sceneIdx}`).classList.add('active');
+        document.getElementById(`ch-${currentScene}`).classList.remove('active');
+        document.getElementById(`ch-${sceneIdx}`).classList.add('active');
+        document.getElementById('sceneLabel').textContent = sceneLabels[sceneIdx];
+        document.getElementById('browserUrl').textContent = sceneUrls[sceneIdx];
+        currentScene = sceneIdx;
+      }
+    }
+
+    function togglePlay() {
+      if (currentTime >= TOTAL) { currentTime = 0; updateUI(); }
+      playing = !playing;
+      document.getElementById('playBtn').textContent = playing ? '⏸' : '▶';
+      if (playing) {
+        interval = setInterval(() => {
+          currentTime += 0.1;
+          updateUI();
+          if (currentTime >= TOTAL) {
+            playing = false;
+            document.getElementById('playBtn').textContent = '▶';
+            clearInterval(interval);
+          }
+        }, 100);
+      } else {
+        clearInterval(interval);
+      }
+    }
+
+    function seekTo(e) {
+      const track = document.getElementById('progressTrack');
+      const rect = track.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      currentTime = pct * TOTAL;
+      updateUI();
+    }
+
+    function goToScene(idx) {
+      currentTime = sceneTimes[idx];
+      updateUI();
+    }
+
+    // Auto-start after 1.5s
+    setTimeout(() => togglePlay(), 1500);
+  </script>
 </body>
 </html>
